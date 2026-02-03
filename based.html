@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>H&C on TOP ‖ Services </title>
+<link rel="icon" type="image/jpeg" href="https://i.imgur.com/S4unQ5F.jpeg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Inter,sans-serif;
+background:radial-gradient(circle at bottom,#5b21b6 0%,#0b0620 35%,#02020a 70%);
+background-attachment:fixed;
+color:#e5e7eb;
+min-height:100vh;
+overflow-x:hidden;
+cursor:none;
+scroll-behavior:smooth;
+}
+
+.stars{
+position:fixed;
+inset:0;
+background:radial-gradient(circle,#ffffff22 1px,transparent 1px);
+background-size:60px 60px;
+opacity:.25;
+z-index:-1;
+pointer-events:none;
+}
+
+.center{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:35px;
+padding:80px 20px 200px;
+}
+
+.logo-orb{
+width:140px;
+height:140px;
+border-radius:50%;
+background:rgba(0,0,0,.2);
+box-shadow:0 0 40px #6366f1,inset 0 0 30px #ec4899;
+overflow:hidden;
+}
+
+.logo-orb img{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:50%;
+}
+
+.lines{
+width:100%;
+max-width:600px;
+height:2px;
+background:linear-gradient(90deg,transparent,#6366f1,transparent);
+opacity:.4;
+}
+
+.title{
+font-family:Orbitron;
+font-size:54px;
+}
+
+.section-label{
+margin-top:-10px;
+padding:6px 16px;
+border-radius:12px;
+background:rgba(0,0,0,.35);
+border:1px solid #6366f1;
+font-size:14px;
+letter-spacing:1px;
+}
+
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+width:100%;
+max-width:900px;
+}
+
+.glass{
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(14px);
+border:1px solid rgba(99,102,241,.4);
+border-radius:18px;
+padding:15px;
+box-shadow:0 0 30px rgba(99,102,241,.35);
+display:flex;
+flex-direction:column;
+gap:10px;
+text-align:center;
+transition:.25s;
+}
+
+.glass:hover{transform:scale(1.06)}
+
+.image-wrap{position:relative}
+
+.glass img{
+border-radius:12px;
+height:140px;
+object-fit:cover;
+width:100%;
+}
+
+.badge{
+position:absolute;
+top:6px;
+right:6px;
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(6px);
+border:1px solid rgba(255,255,255,.3);
+color:white;
+font-size:13px;
+padding:2px 8px;
+border-radius:12px;
+font-family:Orbitron;
+transition:.2s;
+}
+
+.badge::after{content:"🟢"}
+.glass:hover .badge::after{content:"semilag"}
+
+.product-title{
+font-family:Orbitron;
+font-size:18px;
+}
+
+.product-desc{
+font-size:13px;
+color:#9ca3af;
+}
+
+/* BUTTON */
+.access-btn{
+margin-top:6px;
+padding:8px 14px;
+border-radius:10px;
+border:1px solid #6366f1;
+background:rgba(99,102,241,.25);
+color:white;
+text-decoration:none;
+font-size:13px;
+transition:.2s;
+}
+
+.access-btn:hover{
+background:rgba(99,102,241,.6);
+box-shadow:0 0 12px #6366f1;
+}
+
+/* footer */
+.bottom-content{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+display:flex;
+flex-direction:column;
+align-items:center;
+opacity:0;
+pointer-events:none;
+transition:.5s;
+}
+
+.bottom-content.visible{
+opacity:1;
+pointer-events:auto;
+}
+
+.bottom-sections{
+display:flex;
+gap:30px;
+font-size:13px;
+color:#9ca3af;
+margin-bottom:10px;
+}
+
+.bottom-gif{
+width:100%;
+max-height:90px;
+object-fit:contain;
+}
+
+.cursor-dot{
+position:fixed;
+width:10px;
+height:10px;
+background:white;
+border-radius:50%;
+pointer-events:none;
+z-index:9999;
+}
+
+.cursor-glow{
+position:fixed;
+width:50px;
+height:50px;
+background:radial-gradient(circle,white,transparent 60%);
+border-radius:50%;
+filter:blur(6px);
+pointer-events:none;
+z-index:9998;
+}
+
+@media(max-width:700px){
+.title{font-size:38px}
+}
+
+/* TOPBAR */
+.topbar{
+  position:fixed;
+  top:18px;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  z-index:3000;
+  transition:.35s ease;
+}
+.topbar.hide{
+  transform:translateY(-120%);
+  opacity:0;
+}
+.topbar-pill{
+  width:92%;
+  max-width:1200px;
+  padding:10px 22px;
+  border-radius:999px;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 0 30px rgba(99,102,241,.25);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.topbar-left{
+  display:flex;
+  align-items:center;
+  gap:22px;
+}
+.brand{
+  font-family:Orbitron,sans-serif;
+  font-weight:700;
+  font-size:20px;
+  color:#ffffff;
+}
+.topbar-left nav a{
+  color:#e5e7eb;
+  text-decoration:none;
+  margin-right:15px;
+  font-weight:500;
+  transition:.2s;
+}
+.topbar-left nav a.active{
+  color:#6366f1;
+}
+.topbar-right span{
+  margin-left:12px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar" id="topbar">
+  <div class="topbar-pill">
+    <div class="topbar-left">
+      <span class="brand">H&C</span>
+      <nav>
+        <a class="active" href="index.html">Home</a>
+        <a href="based.html">Services</a>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <span>👤</span>
+    </div>
+  </div>
+</div>
+
+<div class="stars"></div>
+
+<div class="center">
+
+<div class="logo-orb">
+<img src="https://i.imgur.com/S4unQ5F.jpeg">
+</div>
+
+<div class="lines"></div>
+
+<div class="title">H&C Services</div>
+
+<div class="section-label">Nos services</div>
+
+<div class="products">
+
+<div class="glass">
+<div class="image-wrap"><span class="badge"></span><img src="https://picsum.photos/300/200?1"></div>
+<div class="product-title">Service 1</div>
+<div class="product-desc">Brève description du produit ou service.</div>
+<a class="access-btn" href="https://discord.com" target="_blank">Accéder</a>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><span class="badge"></span><img src="https://picsum.photos/300/200?2"></div>
+<div class="product-title">Service 2</div>
+<div class="product-desc">Brève description du produit ou service.</div>
+<a class="access-btn" href="https://discord.com" target="_blank">Accéder</a>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><span class="badge"></span><img src="https://picsum.photos/300/200?3"></div>
+<div class="product-title">Service 3</div>
+<div class="product-desc">Brève description du produit ou service.</div>
+<a class="access-btn" href="https://discord.com" target="_blank">Accéder</a>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><span class="badge"></span><img src="https://picsum.photos/300/200?4"></div>
+<div class="product-title">Service 4</div>
+<div class="product-desc">Brève description du produit ou service.</div>
+<a class="access-btn" href="https://discord.com" target="_blank">Accéder</a>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><span class="badge"></span><img src="https://picsum.photos/300/200?5"></div>
+<div class="product-title">Service 5</div>
+<div class="product-desc">Brève description du produit ou service.</div>
+<a class="access-btn" href="https://discord.com" target="_blank">Accéder</a>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><span class="badge"></span><img src="https://picsum.photos/300/200?6"></div>
+<div class="product-title">Service 6</div>
+<div class="product-desc">Brève description du produit ou service.</div>
+<a class="access-btn" href="https://discord.com" target="_blank">Accéder</a>
+</div>
+
+</div>
+</div>
+
+<iframe id="sc-player"
+width="1"
+height="1"
+style="opacity:0;position:absolute"
+allow="autoplay"
+src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/soulwave-309801190/emin-jony-kamin-slowed-reverb&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false">
+</iframe>
+
+<script src="https://w.soundcloud.com/player/api.js"></script>
+
+<div class="bottom-content" id="bottom-content">
+<div class="bottom-sections">
+<span>Developped by S₳₣₩₳₦₁₂₀</span>
+<span>2026-H&C-2026</span>
+<span>Made with ♥</span>
+</div>
+<img class="bottom-gif" src="https://i.imgur.com/ZBm70Dt.gif">
+</div>
+
+<div class="cursor-dot"></div>
+<div class="cursor-glow"></div>
+
+<script>
+const dot=document.querySelector(".cursor-dot");
+const glow=document.querySelector(".cursor-glow");
+let mx=0,my=0,gx=0,gy=0;
+
+addEventListener("mousemove",e=>{
+mx=e.clientX;my=e.clientY;
+dot.style.left=mx+"px";
+dot.style.top=my+"px";
+});
+
+(function loop(){
+gx+=(mx-gx)*.1;
+gy+=(my-gy)*.1;
+glow.style.left=gx-25+"px";
+glow.style.top=gy-25+"px";
+requestAnimationFrame(loop);
+})();
+
+const bottom=document.getElementById("bottom-content");
+addEventListener("scroll",()=>{
+const s=document.documentElement.scrollHeight-innerHeight;
+scrollY>=s-10?bottom.classList.add("visible"):bottom.classList.remove("visible");
+});
+
+const widget=SC.Widget(document.getElementById("sc-player"));
+document.addEventListener("click",()=>widget.play(),{once:true});
+</script>
+
+</body>
+</html>

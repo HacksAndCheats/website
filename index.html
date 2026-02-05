@@ -19,6 +19,60 @@ body{
   cursor:none; 
   scroll-behavior:smooth; 
 }  
+
+/* SPLASH SCREEN STYLES */
+#splash-screen {
+  position: fixed;
+  inset: 0;
+  background: #02020a;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.8s ease, visibility 0.8s;
+  cursor: pointer;
+}
+
+#splash-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.splash-logo {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  box-shadow: 0 0 50px rgba(99, 102, 241, 0.6);
+  margin-bottom: 20px;
+  border: 2px solid #6366f1;
+}
+
+.splash-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 32px;
+  letter-spacing: 4px;
+  margin-bottom: 10px;
+  color: #fff;
+  text-shadow: 0 0 15px #6366f1;
+}
+
+.enter-text {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 18px;
+  color: #6366f1;
+  text-transform: uppercase;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.3; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.3; transform: scale(0.95); }
+}
+
+/* RESTE DU CSS ORIGINAL */
 img{display:block;max-width:100%}  
 .stars{ 
   position:fixed; 
@@ -120,7 +174,6 @@ img{display:block;max-width:100%}
 }  
 .btn:hover{background:rgba(99,102,241,.7);box-shadow:0 0 20px #6366f1} 
 .btn img{width:20px}  
-/* TRUE REVEAL */  
 #image-section{width:100%;max-width:900px}  
 .reveal-wrapper{ 
   position:relative; 
@@ -133,17 +186,14 @@ img{display:block;max-width:100%}
 .reveal-top{ position:absolute; inset:0; clip-path:inset(0 50% 0 0); }  
 .reveal-bar{ position:absolute; top:0; bottom:0; left:50%; width:4px; background:#6366f1; transform:translateX(-50%); cursor:ew-resize; z-index:10; }  
 .reveal-handle{ position:absolute; top:50%; left:50%; width:26px; height:26px; border-radius:50%; background:#6366f1; transform:translate(-50%,-50%); box-shadow:0 0 15px #6366f1; }  
-/* Footer */  
 .bottom-content{ position:fixed; bottom:0; left:0; width:100%; display:flex; flex-direction:column; align-items:center; opacity:0; pointer-events:none; transition:opacity .5s; }  
 .bottom-content.visible{ opacity:1; pointer-events:auto; }  
 .bottom-sections{ display:flex; justify-content:center; gap:30px; font-size:13px; color:#9ca3af; margin-bottom:10px; }  
 .bottom-gif{ width:100%; max-height:90px; object-fit:contain; }  
-/* Cursor */  
 .cursor-dot{ position:fixed; width:10px; height:10px; background:white; border-radius:50%; pointer-events:none; z-index:9999; }  
 .cursor-glow{ position:fixed; width:50px; height:50px; background:radial-gradient(circle,white,transparent 60%); border-radius:50%; filter:blur(6px); pointer-events:none; z-index:9998; }  
 @media(max-width:700px){ .title{font-size:38px} .glass{min-width:280px} }
 
-/* TOPBAR */
 .topbar{
   position:fixed;
   top:18px;
@@ -171,15 +221,15 @@ img{display:block;max-width:100%}
   justify-content:space-between;
   align-items:center;
 }
-.topbar-left{
-  display:flex;
-  align-items:center;
-  gap:22px;
-}
 .brand{
   font-family:Orbitron,sans-serif;
   font-weight:700;
   font-size:20px;
+}
+.topbar-left{
+  display:flex;
+  align-items:center;
+  gap:22px;
 }
 .topbar-left nav a{
   color:#e5e7eb;
@@ -191,15 +241,16 @@ img{display:block;max-width:100%}
 .topbar-left nav a.active{
   color:#6366f1;
 }
-.topbar-right span{
-  margin-left:12px;
-  cursor:pointer;
-}
 </style>
 </head>
 <body>
 
-<!-- TOPBAR AJOUTÉE -->
+<div id="splash-screen">
+  <img src="https://i.imgur.com/S4unQ5F.jpeg" alt="Logo" class="splash-logo">
+  <div class="splash-title">H&C PROJECT</div>
+  <div class="enter-text"><b>CLICK TO ENTER...</b></div>
+</div>
+
 <div class="topbar" id="topbar">
   <div class="topbar-pill">
     <div class="topbar-left">
@@ -211,15 +262,14 @@ img{display:block;max-width:100%}
     </div>
     <div class="topbar-right">
       <a href="https://dsc.gg/hacks-and-cheats" target="_blank">
-  <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e278299a53f5bf88615e90_Symbol.svg" style="width:22px;cursor:pointer">
-</a>
+        <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e278299a53f5bf88615e90_Symbol.svg" style="width:22px;cursor:pointer">
+      </a>
     </div>
   </div>
 </div>
 
 <div class="stars"></div>
 <div class="center">
-
   <div class="logo-orb"> <img src="https://i.imgur.com/S4unQ5F.jpeg"> </div>  
   <div class="lines"></div>  
   <div class="title">H&C Project</div>  
@@ -233,18 +283,18 @@ img{display:block;max-width:100%}
   </div>  
 
   <div class="glass">
-  <div class="input" id="text1">
-    <span class="terminal-text"></span><span class="cursor">|</span>
+    <div class="input" id="text1">
+      <span class="terminal-text"></span><span class="cursor">|</span>
+    </div>
+    <a class="btn" href="based.html">
+      <img src="https://cdn-icons-png.flaticon.com/512/118/118089.png">
+      Our Services
+    </a>
+    <a class="btn" href="https://dsc.gg/hacks-and-cheats" target="_blank">
+      <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e278299a53f5bf88615e90_Symbol.svg">
+      Join Our Discord
+    </a>
   </div>
-  <a class="btn" href="based.html">
-    <img src="https://cdn-icons-png.flaticon.com/512/118/118089.png">
-    Our Services
-  </a>
-  <a class="btn" href="https://dsc.gg/hacks-and-cheats" target="_blank">
-    <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e278299a53f5bf88615e90_Symbol.svg">
-    Join Our Discord
-  </a>
-</div>
 
   <div class="glass">
     <textarea class="simple-text">salutcestmden</textarea>
@@ -259,11 +309,9 @@ img{display:block;max-width:100%}
       </div>
     </div>
   </div>  
-
 </div>
 
-<!-- SoundCloud -->
-<iframe id="sc-player" width="1" height="1" style="opacity:0;position:absolute" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/soulwave-309801190/emin-jony-kamin-slowed-reverb&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false"> </iframe>
+<iframe id="sc-player" width="1" height="1" style="opacity:0;position:absolute" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/soulwave-309801190/emin-jony-kamin-slowed-reverb&auto_play=true"> </iframe>
 <script src="https://w.soundcloud.com/player/api.js"></script>
 
 <div class="bottom-content" id="bottom-content">
@@ -279,15 +327,35 @@ img{display:block;max-width:100%}
 <div class="cursor-glow"></div>
 
 <script>
+/* Splash Screen & Music Logic */
+const splash = document.getElementById('splash-screen');
+const iframe = document.getElementById("sc-player");
+const widget = SC.Widget(iframe);
+
+splash.addEventListener('click', () => {
+  splash.classList.add('fade-out');
+  widget.play(); // Lance la musique au clic
+  // On retire le splash du DOM après l'animation pour libérer de la place
+  setTimeout(() => { splash.style.display = 'none'; }, 800);
+});
+
 /* Cursor */
 const dot=document.querySelector(".cursor-dot"); 
 const glow=document.querySelector(".cursor-glow"); 
 let mx=0,my=0,gx=0,gy=0;  
 
-addEventListener("mousemove",e=>{ mx=e.clientX;my=e.clientY; dot.style.left=mx+"px"; dot.style.top=my+"px"; });  
-(function loop(){ gx+=(mx-gx)*.1; gy+=(my-gy)*.1; glow.style.left=gx-25+"px"; glow.style.top=gy-25+"px"; requestAnimationFrame(loop); })();  
+addEventListener("mousemove",e=>{ 
+  mx=e.clientX; my=e.clientY; 
+  dot.style.left=mx+"px"; dot.style.top=my+"px"; 
+});  
 
-/* Terminal ORIGINAL */
+(function loop(){ 
+  gx+=(mx-gx)*.1; gy+=(my-gy)*.1; 
+  glow.style.left=gx-25+"px"; glow.style.top=gy-25+"px"; 
+  requestAnimationFrame(loop); 
+})();  
+
+/* Terminal */
 function typeTerminal(id,texts){ 
   const el=document.querySelector(`#${id} .terminal-text`); 
   let t=0,c=0;  
@@ -301,9 +369,9 @@ function typeTerminal(id,texts){
   }  
   setTimeout(typeLetter,1000); 
 }  
-typeTerminal("text1",["CHEATS","CRACKS and MODs","LEAKED PREMIUM    ACCOUNTS"]);  
+typeTerminal("text1",["CHEATS","CRACKS and MODs","LEAKED PREMIUM ACCOUNTS"]);  
 
-/* Reveal */
+/* Reveal Slider */
 const overlay=document.getElementById("overlay"); 
 const slider=document.getElementById("slider"); 
 const wrap=document.getElementById("reveal"); 
@@ -319,21 +387,16 @@ function setReveal(x){
 slider.addEventListener("pointerdown",()=>drag=true); 
 addEventListener("pointerup",()=>drag=false); 
 addEventListener("pointermove",e=>{if(drag)setReveal(e.clientX)});  
+window.addEventListener('load', () => setReveal(wrap.getBoundingClientRect().left+wrap.offsetWidth/2));
 
-/* centre par défaut */ 
-setReveal(wrap.getBoundingClientRect().left+wrap.offsetWidth/2);  
-
-/* footer */  
+/* Footer Scroll */
 const bottom=document.getElementById("bottom-content"); 
 addEventListener("scroll",()=>{ 
   const s=document.documentElement.scrollHeight-innerHeight; 
-  scrollY>=s-10?bottom.classList.add("visible"):bottom.classList.remove("visible"); 
-});  
-
-/* SoundCloud autoplay après premier clic */  
-const iframe=document.getElementById("sc-player"); 
-const widget=SC.Widget(iframe);  
-document.addEventListener("click",()=>{ widget.play(); },{once:true});
+  if(s > 0) {
+    scrollY>=s-10?bottom.classList.add("visible"):bottom.classList.remove("visible"); 
+  }
+});
 </script>
 </body>
 </html>

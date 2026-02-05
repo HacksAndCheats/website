@@ -9,15 +9,15 @@
 <style>
 *{box-sizing:border-box}  
 body{ 
-  margin:0; 
-  font-family:Inter,sans-serif; 
-  background:radial-gradient(circle at bottom,#5b21b6 0%,#0b0620 35%,#02020a 70%); 
-  background-attachment:fixed; 
-  color:#e5e7eb; 
-  min-height:100vh; 
-  overflow-x:hidden; 
-  cursor:none; 
-  scroll-behavior:smooth; 
+  margin:0;  
+  font-family:Inter,sans-serif;  
+  background:radial-gradient(circle at bottom,#5b21b6 0%,#0b0620 35%,#02020a 70%);  
+  background-attachment:fixed;  
+  color:#e5e7eb;  
+  min-height:100vh;  
+  overflow-x:hidden;  
+  cursor:none;  
+  scroll-behavior:smooth;  
 }  
 
 /* SPLASH SCREEN STYLES */
@@ -32,6 +32,7 @@ body{
   align-items: center;
   transition: opacity 0.8s ease, visibility 0.8s;
   cursor: pointer;
+  perspective: 1000px; /* Nécessaire pour l'effet 3D du logo */
 }
 
 #splash-screen.fade-out {
@@ -46,6 +47,8 @@ body{
   box-shadow: 0 0 50px rgba(99, 102, 241, 0.6);
   margin-bottom: 20px;
   border: 2px solid #6366f1;
+  transition: transform 0.1s ease-out; /* Fluidité du mouvement */
+  will-change: transform;
 }
 
 .splash-title {
@@ -72,115 +75,115 @@ body{
   100% { opacity: 0.3; transform: scale(0.95); }
 }
 
-/* RESTE DU CSS ORIGINAL */
+/* MAIN CONTENT STYLES */
 img{display:block;max-width:100%}  
-.stars{ 
-  position:fixed; 
-  inset:0; 
-  background:radial-gradient(circle,#ffffff22 1px,transparent 1px); 
-  background-size:60px 60px; 
-  opacity:.25; 
-  z-index:-1; 
-  pointer-events:none; 
+.stars{  
+  position:fixed;  
+  inset:0;  
+  background:radial-gradient(circle,#ffffff22 1px,transparent 1px);  
+  background-size:60px 60px;  
+  opacity:.25;  
+  z-index:-1;  
+  pointer-events:none;  
 }  
-.center{ 
-  display:flex; 
-  flex-direction:column; 
-  align-items:center; 
-  gap:80px; 
-  text-align:center; 
-  padding:80px 20px 160px; 
+.center{  
+  display:flex;  
+  flex-direction:column;  
+  align-items:center;  
+  gap:80px;  
+  text-align:center;  
+  padding:80px 20px 160px;  
 }  
-.logo-orb{ 
-  width:140px; 
-  height:140px; 
-  border-radius:50%; 
-  background:rgba(0,0,0,.2); 
-  box-shadow:0 0 40px #6366f1,inset 0 0 30px #ec4899; 
-  overflow:hidden; 
+.logo-orb{  
+  width:140px;  
+  height:140px;  
+  border-radius:50%;  
+  background:rgba(0,0,0,.2);  
+  box-shadow:0 0 40px #6366f1,inset 0 0 30px #ec4899;  
+  overflow:hidden;  
 }  
-.logo-orb img{ 
-  width:100%; 
-  height:100%; 
-  object-fit:cover; 
-  border-radius:50%; 
+.logo-orb img{  
+  width:100%;  
+  height:100%;  
+  object-fit:cover;  
+  border-radius:50%;  
 }  
-.lines{ 
-  width:100%; 
-  max-width:600px; 
-  height:2px; 
-  background:linear-gradient(90deg,transparent,#6366f1,transparent); 
-  opacity:.4; 
+.lines{  
+  width:100%;  
+  max-width:600px;  
+  height:2px;  
+  background:linear-gradient(90deg,transparent,#6366f1,transparent);  
+  opacity:.4;  
 }  
 .title{font-family:Orbitron;font-size:54px} 
 .subtitle{color:#9ca3af;max-width:640px}  
-.glass{ 
-  background:rgba(255,255,255,.05); 
-  backdrop-filter:blur(14px); 
-  border:1px solid rgba(99,102,241,.4); 
-  border-radius:18px; 
-  padding:18px 22px; 
-  min-width:420px; 
-  max-width:90%; 
-  box-shadow:0 0 30px rgba(99,102,241,.35); 
-  display:flex; 
-  flex-direction:column; 
-  align-items:center; 
-  gap:12px; 
+.glass{  
+  background:rgba(255,255,255,.05);  
+  backdrop-filter:blur(14px);  
+  border:1px solid rgba(99,102,241,.4);  
+  border-radius:18px;  
+  padding:18px 22px;  
+  min-width:420px;  
+  max-width:90%;  
+  box-shadow:0 0 30px rgba(99,102,241,.35);  
+  display:flex;  
+  flex-direction:column;  
+  align-items:center;  
+  gap:12px;  
 }  
-.input{ 
-  width:100%; 
-  background:rgba(0,0,0,.35); 
-  border:1px solid rgba(99,102,241,.6); 
-  color:white; 
-  font-size:18px; 
-  text-align:center; 
-  letter-spacing:2px; 
-  padding:12px 14px; 
-  border-radius:10px; 
-  font-family:monospace; 
-  display:flex; 
-  justify-content:center; 
-  align-items:center; 
+.input{  
+  width:100%;  
+  background:rgba(0,0,0,.35);  
+  border:1px solid rgba(99,102,241,.6);  
+  color:white;  
+  font-size:18px;  
+  text-align:center;  
+  letter-spacing:2px;  
+  padding:12px 14px;  
+  border-radius:10px;  
+  font-family:monospace;  
+  display:flex;  
+  justify-content:center;  
+  align-items:center;  
 }  
-.simple-text{ 
-  width:100%; 
-  background:rgba(0,0,0,.25); 
-  border:1px solid #36f; 
-  border-radius:10px; 
-  color:#00ff99; 
-  font-family:Orbitron,monospace; 
-  font-size:18px; 
-  padding:10px; 
-  text-align:center; 
-  height:160px; 
-  resize:none; 
+.simple-text{  
+  width:100%;  
+  background:rgba(0,0,0,.25);  
+  border:1px solid #36f;  
+  border-radius:10px;  
+  color:#00ff99;  
+  font-family:Orbitron,monospace;  
+  font-size:18px;  
+  padding:10px;  
+  text-align:center;  
+  height:160px;  
+  resize:none;  
 }  
 .cursor{animation:blink 1s infinite} 
 @keyframes blink{50%{opacity:0}}  
-.btn{ 
-  display:flex; 
-  align-items:center; 
-  gap:8px; 
-  padding:10px 18px; 
-  background:rgba(99,102,241,.4); 
-  border:1px solid #6366f1; 
-  border-radius:12px; 
-  color:white; 
-  font-weight:600; 
-  cursor:pointer; 
-  transition:.2s; 
-  text-decoration:none; 
+.btn{  
+  display:flex;  
+  align-items:center;  
+  gap:8px;  
+  padding:10px 18px;  
+  background:rgba(99,102,241,.4);  
+  border:1px solid #6366f1;  
+  border-radius:12px;  
+  color:white;  
+  font-weight:600;  
+  cursor:pointer;  
+  transition:.2s;  
+  text-decoration:none;  
 }  
 .btn:hover{background:rgba(99,102,241,.7);box-shadow:0 0 20px #6366f1} 
 .btn img{width:20px}  
 #image-section{width:100%;max-width:900px}  
-.reveal-wrapper{ 
-  position:relative; 
-  width:100%; 
-  border-radius:14px; 
-  overflow:hidden; 
-  box-shadow:0 0 20px rgba(99,102,241,.4); 
+.reveal-wrapper{  
+  position:relative;  
+  width:100%;  
+  border-radius:14px;  
+  overflow:hidden;  
+  box-shadow:0 0 20px rgba(99,102,241,.4);  
 }  
 .reveal-wrapper img{pointer-events:none;user-select:none}  
 .reveal-top{ position:absolute; inset:0; clip-path:inset(0 50% 0 0); }  
@@ -246,7 +249,7 @@ img{display:block;max-width:100%}
 <body>
 
 <div id="splash-screen">
-  <img src="https://i.imgur.com/S4unQ5F.jpeg" alt="Logo" class="splash-logo">
+  <img src="https://i.imgur.com/S4unQ5F.jpeg" alt="Logo" class="splash-logo" id="splash-logo">
   <div class="splash-title">H&C PROJECT</div>
   <div class="enter-text"><b>CLICK TO ENTER...</b></div>
 </div>
@@ -329,72 +332,84 @@ img{display:block;max-width:100%}
 <script>
 /* Splash Screen & Music Logic */
 const splash = document.getElementById('splash-screen');
+const splashLogo = document.getElementById('splash-logo');
 const iframe = document.getElementById("sc-player");
 const widget = SC.Widget(iframe);
 
 splash.addEventListener('click', () => {
   splash.classList.add('fade-out');
-  widget.play(); // Lance la musique au clic
-  // On retire le splash du DOM après l'animation pour libérer de la place
+  widget.play(); 
   setTimeout(() => { splash.style.display = 'none'; }, 800);
 });
 
-/* Cursor */
-const dot=document.querySelector(".cursor-dot"); 
-const glow=document.querySelector(".cursor-glow"); 
-let mx=0,my=0,gx=0,gy=0;  
+/* Custom Cursor & Splash Logo 3D Effect */
+const dot = document.querySelector(".cursor-dot"); 
+const glow = document.querySelector(".cursor-glow"); 
+let mx=0, my=0, gx=0, gy=0;  
 
-addEventListener("mousemove",e=>{ 
-  mx=e.clientX; my=e.clientY; 
-  dot.style.left=mx+"px"; dot.style.top=my+"px"; 
+addEventListener("mousemove", e => { 
+  mx = e.clientX; 
+  my = e.clientY; 
+  dot.style.left = mx + "px"; 
+  dot.style.top = my + "px"; 
+
+  // --- EFFET 3D UNIQUEMENT SUR LE SPLASH LOGO ---
+  if (splashLogo) {
+      const { innerWidth, innerHeight } = window;
+      const rotationY = ((mx / innerWidth) - 0.5) * 60; 
+      const rotationX = ((my / innerHeight) - 0.5) * -60;
+      splashLogo.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+  }
 });  
 
 (function loop(){ 
-  gx+=(mx-gx)*.1; gy+=(my-gy)*.1; 
-  glow.style.left=gx-25+"px"; glow.style.top=gy-25+"px"; 
+  gx += (mx - gx) * .1; 
+  gy += (my - gy) * .1; 
+  glow.style.left = gx - 25 + "px"; 
+  glow.style.top = gy - 25 + "px"; 
   requestAnimationFrame(loop); 
 })();  
 
-/* Terminal */
-function typeTerminal(id,texts){ 
-  const el=document.querySelector(`#${id} .terminal-text`); 
-  let t=0,c=0;  
-  function typeLetter(){ 
-    if(c<texts[t].length){ el.textContent+=texts[t][c++]; setTimeout(typeLetter,120); }
-    else setTimeout(eraseLetter,800); 
+/* Terminal Animation */
+function typeTerminal(id, texts) { 
+  const el = document.querySelector(`#${id} .terminal-text`); 
+  let t = 0, c = 0;  
+  function typeLetter() { 
+    if (c < texts[t].length) { el.textContent += texts[t][c++]; setTimeout(typeLetter, 120); }
+    else setTimeout(eraseLetter, 800); 
   }  
-  function eraseLetter(){ 
-    if(el.textContent.length){ el.textContent=el.textContent.slice(0,-1); setTimeout(eraseLetter,60); }
-    else{ t=(t+1)%texts.length; c=0; setTimeout(typeLetter,400); } 
+  function eraseLetter() { 
+    if (el.textContent.length) { el.textContent = el.textContent.slice(0, -1); setTimeout(eraseLetter, 60); }
+    else { t = (t + 1) % texts.length; c = 0; setTimeout(typeLetter, 400); } 
   }  
-  setTimeout(typeLetter,1000); 
+  setTimeout(typeLetter, 1000); 
 }  
-typeTerminal("text1",["CHEATS","CRACKS and MODs","LEAKED PREMIUM ACCOUNTS"]);  
+typeTerminal("text1", ["CHEATS", "CRACKS and MODs", "LEAKED PREMIUM ACCOUNTS"]);  
 
 /* Reveal Slider */
-const overlay=document.getElementById("overlay"); 
-const slider=document.getElementById("slider"); 
-const wrap=document.getElementById("reveal"); 
-let drag=false;  
+const overlay = document.getElementById("overlay"); 
+const slider = document.getElementById("slider"); 
+const wrap = document.getElementById("reveal"); 
+let drag = false;  
 
-function setReveal(x){ 
-  const r=wrap.getBoundingClientRect(); 
-  let p=((x-r.left)/r.width)*100; 
-  p=Math.max(0,Math.min(100,p)); 
-  overlay.style.clipPath=`inset(0 ${100-p}% 0 0)`; 
-  slider.style.left=p+"%"; 
+function setReveal(x) { 
+  const r = wrap.getBoundingClientRect(); 
+  let p = ((x - r.left) / r.width) * 100; 
+  p = Math.max(0, Math.min(100, p)); 
+  overlay.style.clipPath = `inset(0 ${100 - p}% 0 0)`; 
+  slider.style.left = p + "%"; 
 }  
-slider.addEventListener("pointerdown",()=>drag=true); 
-addEventListener("pointerup",()=>drag=false); 
-addEventListener("pointermove",e=>{if(drag)setReveal(e.clientX)});  
-window.addEventListener('load', () => setReveal(wrap.getBoundingClientRect().left+wrap.offsetWidth/2));
+slider.addEventListener("pointerdown", () => drag = true); 
+addEventListener("pointerup", () => drag = false); 
+addEventListener("pointermove", e => { if (drag) setReveal(e.clientX) }); 
+window.addEventListener('load', () => setReveal(wrap.getBoundingClientRect().left + wrap.offsetWidth / 2));
 
 /* Footer Scroll */
-const bottom=document.getElementById("bottom-content"); 
-addEventListener("scroll",()=>{ 
-  const s=document.documentElement.scrollHeight-innerHeight; 
-  if(s > 0) {
-    scrollY>=s-10?bottom.classList.add("visible"):bottom.classList.remove("visible"); 
+const bottom = document.getElementById("bottom-content"); 
+addEventListener("scroll", () => { 
+  const s = document.documentElement.scrollHeight - innerHeight; 
+  if (s > 0) {
+    scrollY >= s - 10 ? bottom.classList.add("visible") : bottom.classList.remove("visible"); 
   }
 });
 </script>

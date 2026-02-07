@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -261,8 +262,8 @@ img{display:block;max-width:100%}
 }  
 .cursor-glow{
 position:fixed;
-width:50px;
-height:50px;
+width:60px;
+height:60px;
 background:radial-gradient(circle, white, transparent 60%);
 border-radius:50%;
 filter:blur(6px);
@@ -287,7 +288,19 @@ body.hovering .cursor-dot {
     box-shadow: 0 0 20px #00ff99, 0 0 40px rgba(0, 255, 153, 0.5);
 }
 
-.bottom-content{ position:fixed; bottom:0; left:0; width:100%; display:flex; flex-direction:column; align-items:center; opacity:0; pointer-events:none; transition:opacity .5s; }  
+.bottom-content{ position:fixed; bottom:0; left:0; width:100%; display:flex; flex-direction:column; align-items:center; opacity:0; pointer-events:none; transition:opacity .5s; }
+
+ .dev-link {
+  color: #ffffff !important; /* Blanc pur */
+  text-decoration: none;
+  font-weight: 600; /* Un peu plus épais pour la lisibilité */
+  transition: opacity 0.2s;
+}
+
+.dev-link:hover {
+  opacity: 0.8; /* Petit effet au survol */
+}
+
 .bottom-content.visible{ opacity:1; pointer-events:auto; }  
 .bottom-sections{ display:flex; justify-content:center; gap:30px; font-size:13px; color:#9ca3af; margin-bottom:10px; }  
 .bottom-gif{ width:100%; max-height:90px; object-fit:contain; }  
@@ -415,7 +428,7 @@ body.hovering .cursor-dot {
 
 <div class="bottom-content" id="bottom-content">
   <div class="bottom-sections">
-    <span>Developped by S₳₣₩₳₦₁₂₀</span>
+    <a href="https://guns.lol/safwan120" target="_blank" class="dev-link">Developped by S₳₣₩₳₦₁₂₀</a>
     <span>2026-H&C-2026</span>
     <span>Made with ♥</span>
   </div>
@@ -577,12 +590,13 @@ function createParticle(x, y) {
 }
 
 (function loop(){
-gx+=(mx-gx)*.12;
-gy+=(my-gy)*.12;
-glow.style.left=gx+"px";
-glow.style.top=gy+"px";
-requestAnimationFrame(loop);
-})();  
+  // On réduit à 0.08 pour plus de douceur
+  gx += (mx - gx) * 0.08;
+  gy += (my - gy) * 0.08;
+  glow.style.left = gx + "px";
+  glow.style.top = gy + "px";
+  requestAnimationFrame(loop);
+})();
 
 /* Terminal Animation */
 function typeTerminal(id, texts) { 

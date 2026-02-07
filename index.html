@@ -16,9 +16,21 @@ body{
   color:#e5e7eb;  
   min-height:100vh;  
   overflow-x:hidden;  
-  cursor:none;  
+  cursor:none; 
   scroll-behavior:smooth;  
 }  
+
+/* Background Particles Canvas */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+a, button, .btn, #splash-screen, .reveal-bar, .reveal-handle, textarea, .topbar-right img, .topbar-left nav a {
+    cursor: none !important;
+}
 
 /* SPLASH SCREEN STYLES */
 #splash-screen {
@@ -31,8 +43,20 @@ body{
   justify-content: center;
   align-items: center;
   transition: opacity 0.8s ease, visibility 0.8s;
-  cursor: pointer;
-  perspective: 1000px; /* Nécessaire pour l'effet 3D du logo */
+  perspective: 1000px;
+  overflow: hidden; /* Important pour la pluie */
+}
+
+/* Rain Canvas */
+#rain-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.6;
 }
 
 #splash-screen.fade-out {
@@ -41,17 +65,21 @@ body{
 }
 
 .splash-logo {
+  position: relative;
+  z-index: 10;
   width: 180px;
   height: 180px;
   border-radius: 50%;
   box-shadow: 0 0 50px rgba(99, 102, 241, 0.6);
   margin-bottom: 20px;
   border: 2px solid #6366f1;
-  transition: transform 0.1s ease-out; /* Fluidité du mouvement */
+  transition: transform 0.1s ease-out;
   will-change: transform;
 }
 
 .splash-title {
+  position: relative;
+  z-index: 10;
   font-family: 'Orbitron', sans-serif;
   font-size: 32px;
   letter-spacing: 4px;
@@ -61,6 +89,8 @@ body{
 }
 
 .enter-text {
+  position: relative;
+  z-index: 10;
   font-family: 'Orbitron', sans-serif;
   font-weight: 900;
   font-size: 18px;
@@ -94,14 +124,21 @@ img{display:block;max-width:100%}
   text-align:center;  
   padding:80px 20px 160px;  
 }  
+
 .logo-orb{  
   width:140px;  
   height:140px;  
   border-radius:50%;  
   background:rgba(0,0,0,.2);  
   box-shadow:0 0 40px #6366f1,inset 0 0 30px #ec4899;  
-  overflow:hidden;  
+  overflow:hidden;
+  animation: logoPulse 3s infinite alternate ease-in-out;
 }  
+@keyframes logoPulse {
+  from { box-shadow: 0 0 30px #6366f1, inset 0 0 20px #ec4899; transform: scale(1); }
+  to { box-shadow: 0 0 60px #6366f1, inset 0 0 40px #ec4899; transform: scale(1.05); }
+}
+
 .logo-orb img{  
   width:100%;  
   height:100%;  
@@ -115,8 +152,9 @@ img{display:block;max-width:100%}
   background:linear-gradient(90deg,transparent,#6366f1,transparent);  
   opacity:.4;  
 }  
-.title{font-family:Orbitron;font-size:54px} 
+.title{font-family:Orbitron;font-size:54px;} 
 .subtitle{color:#9ca3af;max-width:640px}  
+
 .glass{  
   background:rgba(255,255,255,.05);  
   backdrop-filter:blur(14px);  
@@ -125,12 +163,18 @@ img{display:block;max-width:100%}
   padding:18px 22px;  
   min-width:420px;  
   max-width:90%;  
-  box-shadow:0 0 30px rgba(99,102,241,.35);  
+  box-shadow:0 0 30px rgba(99,102,241,0.35);  
   display:flex;  
   flex-direction:column;  
   align-items:center;  
-  gap:12px;  
+  gap:12px;
+  animation: floating 6s infinite ease-in-out;
 }  
+@keyframes floating {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
 .input{  
   width:100%;  
   background:rgba(0,0,0,.35);  
@@ -161,7 +205,10 @@ img{display:block;max-width:100%}
 }  
 .cursor{animation:blink 1s infinite} 
 @keyframes blink{50%{opacity:0}}  
+
 .btn{  
+  position: relative;
+  overflow: hidden;
   display:flex;  
   align-items:center;  
   gap:8px;  
@@ -171,12 +218,22 @@ img{display:block;max-width:100%}
   border-radius:12px;  
   color:white;  
   font-weight:600;  
-  cursor:pointer;  
-  transition:.2s;  
+  transition:.3s;  
   text-decoration:none;  
 }  
-.btn:hover{background:rgba(99,102,241,.7);box-shadow:0 0 20px #6366f1} 
+.btn::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -100%;
+  width: 50%; height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: rotate(25deg);
+  transition: 0.5s;
+}
+.btn:hover::after { left: 150%; }
+.btn:hover{background:rgba(99,102,241,.7);box-shadow:0 0 20px #6366f1;} 
 .btn img{width:20px}  
+
 #image-section{width:100%;max-width:900px}  
 .reveal-wrapper{  
   position:relative;  
@@ -187,14 +244,54 @@ img{display:block;max-width:100%}
 }  
 .reveal-wrapper img{pointer-events:none;user-select:none}  
 .reveal-top{ position:absolute; inset:0; clip-path:inset(0 50% 0 0); }  
-.reveal-bar{ position:absolute; top:0; bottom:0; left:50%; width:4px; background:#6366f1; transform:translateX(-50%); cursor:ew-resize; z-index:10; }  
+.reveal-bar{ position:absolute; top:0; bottom:0; left:50%; width:4px; background:#6366f1; transform:translateX(-50%); z-index:10; }  
 .reveal-handle{ position:absolute; top:50%; left:50%; width:26px; height:26px; border-radius:50%; background:#6366f1; transform:translate(-50%,-50%); box-shadow:0 0 15px #6366f1; }  
+
+/* --- CURSOR SYSTEM (RESTORED GLOW) --- */
+.cursor-dot{ 
+  position:fixed; 
+  width:10px; 
+  height:10px; 
+  background:white; 
+  border-radius:50%; 
+  pointer-events:none; 
+  z-index:10000; 
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s, box-shadow 0.2s;
+}  
+.cursor-glow{
+position:fixed;
+width:50px;
+height:50px;
+background:radial-gradient(circle, white, transparent 60%);
+border-radius:50%;
+filter:blur(6px);
+pointer-events:none;
+z-index:9998;
+transform: translate(-50%, -50%);
+}
+
+.cursor-particle {
+  position: fixed;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+}
+
+body.hovering .cursor-dot {
+    width: 20px;
+    height: 20px;
+    background: #00ff99; 
+    box-shadow: 0 0 20px #00ff99, 0 0 40px rgba(0, 255, 153, 0.5);
+}
+
 .bottom-content{ position:fixed; bottom:0; left:0; width:100%; display:flex; flex-direction:column; align-items:center; opacity:0; pointer-events:none; transition:opacity .5s; }  
 .bottom-content.visible{ opacity:1; pointer-events:auto; }  
 .bottom-sections{ display:flex; justify-content:center; gap:30px; font-size:13px; color:#9ca3af; margin-bottom:10px; }  
 .bottom-gif{ width:100%; max-height:90px; object-fit:contain; }  
-.cursor-dot{ position:fixed; width:10px; height:10px; background:white; border-radius:50%; pointer-events:none; z-index:9999; }  
-.cursor-glow{ position:fixed; width:50px; height:50px; background:radial-gradient(circle,white,transparent 60%); border-radius:50%; filter:blur(6px); pointer-events:none; z-index:9998; }  
+
 @media(max-width:700px){ .title{font-size:38px} .glass{min-width:280px} }
 
 .topbar{
@@ -206,10 +303,6 @@ img{display:block;max-width:100%}
   justify-content:center;
   z-index:3000;
   transition:.35s ease;
-}
-.topbar.hide{
-  transform:translateY(-120%);
-  opacity:0;
 }
 .topbar-pill{
   width:92%;
@@ -248,7 +341,10 @@ img{display:block;max-width:100%}
 </head>
 <body>
 
+<canvas id="particle-canvas"></canvas>
+
 <div id="splash-screen">
+  <canvas id="rain-canvas"></canvas>
   <img src="https://i.imgur.com/S4unQ5F.jpeg" alt="Logo" class="splash-logo" id="splash-logo">
   <div class="splash-title">H&C PROJECT</div>
   <div class="enter-text"><b>CLICK TO ENTER...</b></div>
@@ -265,7 +361,7 @@ img{display:block;max-width:100%}
     </div>
     <div class="topbar-right">
       <a href="https://dsc.gg/hacks-and-cheats" target="_blank">
-        <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e278299a53f5bf88615e90_Symbol.svg" style="width:22px;cursor:pointer">
+        <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e278299a53f5bf88615e90_Symbol.svg" style="width:22px;">
       </a>
     </div>
   </div>
@@ -299,7 +395,7 @@ img{display:block;max-width:100%}
     </a>
   </div>
 
-  <div class="glass">
+  <div class="glass" style="animation-delay: 1s;">
     <textarea class="simple-text">salutcestmden</textarea>
   </div>  
 
@@ -330,6 +426,98 @@ img{display:block;max-width:100%}
 <div class="cursor-glow"></div>
 
 <script>
+/* --- RAIN EFFECT FOR SPLASH SCREEN --- */
+const rainCanvas = document.getElementById('rain-canvas');
+const rCtx = rainCanvas.getContext('2d');
+let drops = [];
+
+function initRain() {
+    rainCanvas.width = window.innerWidth;
+    rainCanvas.height = window.innerHeight;
+    drops = [];
+    for(let i = 0; i < 100; i++) {
+        drops.push({
+            x: Math.random() * rainCanvas.width,
+            y: Math.random() * rainCanvas.height,
+            len: Math.random() * 20 + 10,
+            speed: Math.random() * 10 + 5
+        });
+    }
+}
+
+function drawRain() {
+    rCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+    rCtx.strokeStyle = 'rgba(99, 102, 241, 0.5)';
+    rCtx.lineWidth = 1;
+    rCtx.lineCap = 'round';
+    
+    drops.forEach(d => {
+        rCtx.beginPath();
+        rCtx.moveTo(d.x, d.y);
+        rCtx.lineTo(d.x, d.y + d.len);
+        rCtx.stroke();
+        
+        d.y += d.speed;
+        if (d.y > rainCanvas.height) {
+            d.y = -d.len;
+            d.x = Math.random() * rainCanvas.width;
+        }
+    });
+    requestAnimationFrame(drawRain);
+}
+
+window.addEventListener('resize', initRain);
+initRain();
+drawRain();
+
+/* --- BACKGROUND PARTICLES SYSTEM --- */
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particlesArray = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class ParticleBg {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.4;
+    this.speedY = (Math.random() - 0.5) * 0.4;
+    this.alpha = Math.random() * 0.5;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+  }
+  draw() {
+    ctx.fillStyle = `rgba(99, 102, 241, ${this.alpha})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 80; i++) {
+  particlesArray.push(new ParticleBg());
+}
+
+function animateBg() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particlesArray.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateBg);
+}
+animateBg();
+
 /* Splash Screen & Music Logic */
 const splash = document.getElementById('splash-screen');
 const splashLogo = document.getElementById('splash-logo');
@@ -342,7 +530,7 @@ splash.addEventListener('click', () => {
   setTimeout(() => { splash.style.display = 'none'; }, 800);
 });
 
-/* Custom Cursor & Splash Logo 3D Effect */
+/* Custom Cursor & Effects */
 const dot = document.querySelector(".cursor-dot"); 
 const glow = document.querySelector(".cursor-glow"); 
 let mx=0, my=0, gx=0, gy=0;  
@@ -353,21 +541,47 @@ addEventListener("mousemove", e => {
   dot.style.left = mx + "px"; 
   dot.style.top = my + "px"; 
 
-  // --- EFFET 3D UNIQUEMENT SUR LE SPLASH LOGO ---
-  if (splashLogo) {
+  if (splashLogo && splash.style.display !== 'none') {
       const { innerWidth, innerHeight } = window;
       const rotationY = ((mx / innerWidth) - 0.5) * 60; 
       const rotationX = ((my / innerHeight) - 0.5) * -60;
       splashLogo.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
   }
+
+  const isClickable = e.target.closest('a, button, .btn, #splash-screen, .reveal-bar, .reveal-handle, textarea, .topbar-right img, nav a');
+  if(isClickable) {
+      document.body.classList.add('hovering');
+  } else {
+      document.body.classList.remove('hovering');
+  }
+
+  createParticle(mx, my);
 });  
 
-(function loop(){ 
-  gx += (mx - gx) * .1; 
-  gy += (my - gy) * .1; 
-  glow.style.left = gx - 25 + "px"; 
-  glow.style.top = gy - 25 + "px"; 
-  requestAnimationFrame(loop); 
+function createParticle(x, y) {
+  const p = document.createElement("div");
+  p.className = "cursor-particle";
+  const size = Math.random() * 3 + 1;
+  p.style.width = size + "px";
+  p.style.height = size + "px";
+  p.style.left = x + "px";
+  p.style.top = y + "px";
+  document.body.appendChild(p);
+  
+  const anim = p.animate([
+    { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.8 },
+    { transform: `translate(${(Math.random()-0.5)*40}px, ${(Math.random()-0.5)*40}px) scale(0)`, opacity: 0 }
+  ], { duration: 1000, easing: 'ease-out' });
+
+  anim.onfinish = () => p.remove();
+}
+
+(function loop(){
+gx+=(mx-gx)*.12;
+gy+=(my-gy)*.12;
+glow.style.left=gx+"px";
+glow.style.top=gy+"px";
+requestAnimationFrame(loop);
 })();  
 
 /* Terminal Animation */
@@ -376,7 +590,7 @@ function typeTerminal(id, texts) {
   let t = 0, c = 0;  
   function typeLetter() { 
     if (c < texts[t].length) { el.textContent += texts[t][c++]; setTimeout(typeLetter, 120); }
-    else setTimeout(eraseLetter, 800); 
+    else setTimeout(eraseLetter, 1200); 
   }  
   function eraseLetter() { 
     if (el.textContent.length) { el.textContent = el.textContent.slice(0, -1); setTimeout(eraseLetter, 60); }
@@ -409,7 +623,7 @@ const bottom = document.getElementById("bottom-content");
 addEventListener("scroll", () => { 
   const s = document.documentElement.scrollHeight - innerHeight; 
   if (s > 0) {
-    scrollY >= s - 10 ? bottom.classList.add("visible") : bottom.classList.remove("visible"); 
+    scrollY >= s - 20 ? bottom.classList.add("visible") : bottom.classList.remove("visible"); 
   }
 });
 </script>

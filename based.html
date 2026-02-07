@@ -22,6 +22,13 @@ overflow-x:hidden;
 cursor:none;
 scroll-behavior:smooth;
 }
+/* Background Particles Canvas */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
 
 /* Désactive le curseur par défaut sur tous les éléments interactifs */
 a, button, .btn, .access-btn, textarea, .topbar-right img, .topbar-left nav a {
@@ -181,6 +188,17 @@ transition:.5s;
 .bottom-content.visible{
 opacity:1;
 pointer-events:auto;
+
+}
+.dev-link {
+  color: #ffffff !important; /* Blanc pur */
+  text-decoration: none;
+  font-weight: 600; /* Un peu plus épais pour la lisibilité */
+  transition: opacity 0.2s;
+}
+
+.dev-link:hover {
+  opacity: 0.8; /* Petit effet au survol */
 }
 
 .bottom-sections{
@@ -198,27 +216,27 @@ object-fit:contain;
 }
 
 /* CURSOR SYSTEM */
-.cursor-dot{
-position:fixed;
-width:10px;
-height:10px;
-background:white;
-border-radius:50%;
-pointer-events:none;
-z-index:9999;
-transform: translate(-50%, -50%);
-transition: width 0.2s, height 0.2s, background 0.2s, box-shadow 0.2s;
-}
-
+.cursor-dot{ 
+  position:fixed; 
+  width:10px; 
+  height:10px; 
+  background:white; 
+  border-radius:50%; 
+  pointer-events:none; 
+  z-index:10000; 
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s, box-shadow 0.2s;
+}  
 .cursor-glow{
 position:fixed;
-width:50px;
-height:50px;
-background:radial-gradient(circle,white,transparent 60%);
+width:60px;
+height:60px;
+background:radial-gradient(circle, white, transparent 60%);
 border-radius:50%;
 filter:blur(6px);
 pointer-events:none;
 z-index:9998;
+transform: translate(-50%, -50%);
 }
 
 .cursor-particle {
@@ -299,6 +317,8 @@ body.hovering .cursor-dot {
 </head>
 
 <body>
+
+<canvas id="particle-canvas"></canvas>
 
 <div class="topbar" id="topbar">
   <div class="topbar-pill">
@@ -405,6 +425,34 @@ body.hovering .cursor-dot {
 </div>
 
 </div>
+<div class="lines"></div>
+
+<div class="section-label">Our EXTRAS</div>
+
+<div class="products">
+
+<div class="glass">
+<div class="image-wrap"><img src="https://i.imgur.com/6ju8Cht.jpeg"></div>
+<div class="product-title">Free CANAL+ and beIN SPORTS access</div>
+<div class="product-desc">Free CANAL+ and beIN SPORTS access: enjoy free access to top movies, series, and live sports events, with no commitment.</div>
+<a class="access-btn" href="https://discord.gg/X6WhJHq4f2" target="_blank">Get now</a>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><img src="https://i.imgur.com/vTUgtHX.jpeg"></div>
+<div class="product-title">Free Access to All TV Channels</div>
+<div class="product-desc">Gives you unlimited access to all your favorite TV channels for free, anytime and anywhere.</div>
+<a class="access-btn" href="https://discord.gg/X6WhJHq4f2" target="_blank">Get now</a>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><img src="https://i.imgur.com/tT2FZYR.jpeg"></div>
+<div class="product-title">Free Movies/Anime Access</div>
+<div class="product-desc">Free Movies and Anime Access is a simple and convenient platform that gives you easy access to a wide selection of movies anytime, anywhere.</div>
+<a class="access-btn" href="https://discord.gg/X6WhJHq4f2" target="_blank">Get now</a>
+</div>
+
+</div>
 
 </div>
 
@@ -420,7 +468,7 @@ src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/soulwave-3098
 
 <div class="bottom-content" id="bottom-content">
 <div class="bottom-sections">
-<span>Developped by S₳₣₩₳₦₁₂₀</span>
+<a href="https://guns.lol/safwan120" target="_blank" class="dev-link">Developped by S₳₣₩₳₦₁₂₀</a>
 <span>2026-H&C-2026</span>
 <span>Made with ♥</span>
 </div>
@@ -431,68 +479,117 @@ src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/soulwave-3098
 <div class="cursor-glow"></div>
 
 <script>
-const dot=document.querySelector(".cursor-dot");
-const glow=document.querySelector(".cursor-glow");
-let mx=0,my=0,gx=0,gy=0;
+const dot = document.querySelector(".cursor-dot");
+const glow = document.querySelector(".cursor-glow");
+let mx = 0, my = 0, gx = 0, gy = 0;
 
-// Init
-mx = window.innerWidth / 2;
-my = window.innerHeight / 2;
+/* --- 1. INITIALISATION DES PARTICULES (HORS DU MOUSEMOVE) --- */
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particlesArray = [];
 
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class ParticleBg {
+    constructor() {
+        this.reset();
+    }
+    reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.4;
+        this.speedY = (Math.random() - 0.5) * 0.4;
+        this.alpha = Math.random() * 0.5;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+    }
+    draw() {
+        ctx.fillStyle = `rgba(99, 102, 241, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+// On crée les particules une seule fois au chargement
+for (let i = 0; i < 80; i++) {
+    particlesArray.push(new ParticleBg());
+}
+
+// La boucle d'animation tourne en permanence
+function animateBg() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particlesArray.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animateBg);
+}
+animateBg();
+
+/* --- 2. GESTION DU CURSEUR ET DES EFFETS DE MOUVEMENT --- */
 addEventListener("mousemove", e => {
-  mx = e.clientX; 
-  my = e.clientY; 
-  dot.style.left = mx + "px"; 
-  dot.style.top = my + "px"; 
+    mx = e.clientX; 
+    my = e.clientY; 
+    dot.style.left = mx + "px"; 
+    dot.style.top = my + "px"; 
 
-  // Effet de traînée (paillettes)
-  createParticle(mx, my);
+    // Création des paillettes lors du mouvement
+    createParticle(mx, my);
 
-  // Détection zone cliquable
-  const isClickable = e.target.closest('a, button, .btn, .access-btn, textarea, img, nav a');
-  if(isClickable) {
-      document.body.classList.add('hovering');
-  } else {
-      document.body.classList.remove('hovering');
-  }
+    // Détection zone cliquable
+    const isClickable = e.target.closest('a, button, .btn, .access-btn, textarea, img, nav a');
+    if(isClickable) {
+        document.body.classList.add('hovering');
+    } else {
+        document.body.classList.remove('hovering');
+    }
 });
 
 function createParticle(x, y) {
-  const p = document.createElement("div");
-  p.className = "cursor-particle";
-  const size = Math.random() * 3 + 1;
-  p.style.width = size + "px";
-  p.style.height = size + "px";
-  p.style.left = x + "px";
-  p.style.top = y + "px";
-  document.body.appendChild(p);
-  
-  const anim = p.animate([
-    { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.8 },
-    { transform: `translate(${(Math.random()-0.5)*30}px, ${(Math.random()-0.5)*30}px) scale(0)`, opacity: 0 }
-  ], { duration: 800, easing: 'ease-out' });
+    const p = document.createElement("div");
+    p.className = "cursor-particle";
+    const size = Math.random() * 3 + 1;
+    p.style.width = size + "px";
+    p.style.height = size + "px";
+    p.style.left = x + "px";
+    p.style.top = y + "px";
+    document.body.appendChild(p);
+    
+    const anim = p.animate([
+        { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.8 },
+        { transform: `translate(${(Math.random()-0.5)*30}px, ${(Math.random()-0.5)*30}px) scale(0)`, opacity: 0 }
+    ], { duration: 800, easing: 'ease-out' });
 
-  anim.onfinish = () => p.remove();
+    anim.onfinish = () => p.remove();
 }
 
 (function loop(){
-gx+=(mx-gx)*.1;
-gy+=(my-gy)*.1;
-glow.style.left=gx-25+"px";
-glow.style.top=gy-25+"px";
-requestAnimationFrame(loop);
+  // On réduit à 0.08 pour plus de douceur
+  gx += (mx - gx) * 0.08;
+  gy += (my - gy) * 0.08;
+  glow.style.left = gx + "px";
+  glow.style.top = gy + "px";
+  requestAnimationFrame(loop);
 })();
 
-const bottom=document.getElementById("bottom-content");
+/* --- 3. AUTRES SCRIPTS (SCROLL, MUSIC) --- */
+const bottom = document.getElementById("bottom-content");
 addEventListener("scroll",()=>{
-const s=document.documentElement.scrollHeight-innerHeight;
-if (s > 0) {
-    scrollY>=s-10?bottom.classList.add("visible"):bottom.classList.remove("visible");
-}
+    const s = document.documentElement.scrollHeight - innerHeight;
+    if (s > 0) {
+        scrollY >= s - 10 ? bottom.classList.add("visible") : bottom.classList.remove("visible");
+    }
 });
 
-const widget=SC.Widget(document.getElementById("sc-player"));
-document.addEventListener("click",()=>widget.play(),{once:true});
+const widget = SC.Widget(document.getElementById("sc-player"));
+document.addEventListener("click", () => widget.play(), {once: true});
 </script>
 
 </body>

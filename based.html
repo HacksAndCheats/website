@@ -23,6 +23,11 @@ cursor:none;
 scroll-behavior:smooth;
 }
 
+/* Désactive le curseur par défaut sur tous les éléments interactifs */
+a, button, .btn, .access-btn, textarea, .topbar-right img, .topbar-left nav a {
+    cursor: none !important;
+}
+
 .stars{
 position:fixed;
 inset:0;
@@ -192,6 +197,7 @@ max-height:90px;
 object-fit:contain;
 }
 
+/* CURSOR SYSTEM */
 .cursor-dot{
 position:fixed;
 width:10px;
@@ -200,6 +206,8 @@ background:white;
 border-radius:50%;
 pointer-events:none;
 z-index:9999;
+transform: translate(-50%, -50%);
+transition: width 0.2s, height 0.2s, background 0.2s, box-shadow 0.2s;
 }
 
 .cursor-glow{
@@ -211,6 +219,23 @@ border-radius:50%;
 filter:blur(6px);
 pointer-events:none;
 z-index:9998;
+}
+
+.cursor-particle {
+  position: fixed;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+}
+
+/* ÉTAT VERT LORS DU SURVOL */
+body.hovering .cursor-dot {
+    width: 20px;
+    height: 20px;
+    background: #00ff99;
+    box-shadow: 0 0 20px #00ff99, 0 0 40px rgba(0, 255, 153, 0.5);
 }
 
 @media(max-width:700px){
@@ -275,14 +300,13 @@ z-index:9998;
 
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar" id="topbar">
   <div class="topbar-pill">
     <div class="topbar-left">
       <span class="brand">H&C</span>
       <nav>
-        <a class="active" href="index.html">Home</a>
-        <a href="based.html">Services</a>
+        <a href="index.html">Home</a>
+        <a class="active" href="based.html">Services</a>
       </nav>
     </div>
     <div class="topbar-right">
@@ -375,7 +399,7 @@ z-index:9998;
 
 <div class="glass">
 <div class="image-wrap"><img src="https://i.imgur.com/4HKTOyE.png"></div>
-<div class="product-title">PayPal Accounts Leaks</div>
+<div class="product-title">PayPalAccounts Leaks</div>
 <div class="product-desc">Free leaked PayPal accounts drop</div>
 <a class="access-btn" href="https://discord.gg/X6WhJHq4f2" target="_blank">Get now</a>
 </div>
@@ -389,7 +413,7 @@ width="1"
 height="1"
 style="opacity:0;position:absolute"
 allow="autoplay"
-src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/soulwave-309801190/emin-jony-kamin-slowed-reverb&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false">
+src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/soulwave-309801190/emin-jony-kamin-slowed-reverb&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false">
 </iframe>
 
 <script src="https://w.soundcloud.com/player/api.js"></script>
@@ -411,11 +435,45 @@ const dot=document.querySelector(".cursor-dot");
 const glow=document.querySelector(".cursor-glow");
 let mx=0,my=0,gx=0,gy=0;
 
-addEventListener("mousemove",e=>{
-mx=e.clientX;my=e.clientY;
-dot.style.left=mx+"px";
-dot.style.top=my+"px";
+// Init
+mx = window.innerWidth / 2;
+my = window.innerHeight / 2;
+
+addEventListener("mousemove", e => {
+  mx = e.clientX; 
+  my = e.clientY; 
+  dot.style.left = mx + "px"; 
+  dot.style.top = my + "px"; 
+
+  // Effet de traînée (paillettes)
+  createParticle(mx, my);
+
+  // Détection zone cliquable
+  const isClickable = e.target.closest('a, button, .btn, .access-btn, textarea, img, nav a');
+  if(isClickable) {
+      document.body.classList.add('hovering');
+  } else {
+      document.body.classList.remove('hovering');
+  }
 });
+
+function createParticle(x, y) {
+  const p = document.createElement("div");
+  p.className = "cursor-particle";
+  const size = Math.random() * 3 + 1;
+  p.style.width = size + "px";
+  p.style.height = size + "px";
+  p.style.left = x + "px";
+  p.style.top = y + "px";
+  document.body.appendChild(p);
+  
+  const anim = p.animate([
+    { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.8 },
+    { transform: `translate(${(Math.random()-0.5)*30}px, ${(Math.random()-0.5)*30}px) scale(0)`, opacity: 0 }
+  ], { duration: 800, easing: 'ease-out' });
+
+  anim.onfinish = () => p.remove();
+}
 
 (function loop(){
 gx+=(mx-gx)*.1;
@@ -428,7 +486,9 @@ requestAnimationFrame(loop);
 const bottom=document.getElementById("bottom-content");
 addEventListener("scroll",()=>{
 const s=document.documentElement.scrollHeight-innerHeight;
-scrollY>=s-10?bottom.classList.add("visible"):bottom.classList.remove("visible");
+if (s > 0) {
+    scrollY>=s-10?bottom.classList.add("visible"):bottom.classList.remove("visible");
+}
 });
 
 const widget=SC.Widget(document.getElementById("sc-player"));

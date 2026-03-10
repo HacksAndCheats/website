@@ -387,7 +387,7 @@ object-fit:contain;
 
 <div class="bottom-content" id="bottom-content">
 <div class="bottom-sections">
-<a href="https://guns.lol/safwan120" target="_blank" class="dev-link">Developped by S₳₣₩₳₦₁₂₀</a>
+<a href="https://guns.lol/safwan120" target="_blank" class="dev-link">Developed by S₳₣₩₳₦₁₂₀</a>
 <span>2026-H&C-2026</span>
 <span>Made with ❤️</span>
 </div>
@@ -500,7 +500,75 @@ addEventListener("scroll",()=>{
 });
 
 const widget = SC.Widget(document.getElementById("sc-player"));
-document.addEventListener("click", () => widget.play(), {once: true});
+
+// Système de synchronisation de la musique entre les pages
+let musicState = {
+  isPlaying: false,
+  position: 0,
+  lastUpdate: Date.now()
+};
+
+// Charger l'état de la musique depuis localStorage
+function loadMusicState() {
+  const saved = localStorage.getItem('musicState');
+  if (saved) {
+    musicState = JSON.parse(saved);
+    // Si la musique était en lecture, calculer la nouvelle position
+    if (musicState.isPlaying) {
+      const elapsed = (Date.now() - musicState.lastUpdate) / 1000;
+      musicState.position += elapsed;
+    }
+  }
+}
+
+// Sauvegarder l'état de la musique
+function saveMusicState() {
+  musicState.lastUpdate = Date.now();
+  localStorage.setItem('musicState', JSON.stringify(musicState));
+}
+
+// Initialiser la musique
+loadMusicState();
+
+widget.bind(SC.Widget.Events.READY, function() {
+  if (musicState.isPlaying) {
+    widget.seekTo(musicState.position * 1000);
+    widget.play();
+  }
+  
+  // Sauvegarder la position toutes les secondes
+  setInterval(() => {
+    widget.getPosition(function(pos) {
+      musicState.position = pos / 1000;
+      widget.isPaused(function(paused) {
+        musicState.isPlaying = !paused;
+        saveMusicState();
+      });
+    });
+  }, 1000);
+});
+
+// Démarrer la musique au premier clic
+document.addEventListener("click", () => {
+  widget.isPaused(function(paused) {
+    if (paused) {
+      widget.play();
+      musicState.isPlaying = true;
+      saveMusicState();
+    }
+  });
+}, {once: true});
+
+// Sauvegarder avant de quitter la page
+window.addEventListener('beforeunload', () => {
+  widget.getPosition(function(pos) {
+    musicState.position = pos / 1000;
+    widget.isPaused(function(paused) {
+      musicState.isPlaying = !paused;
+      saveMusicState();
+    });
+  });
+});
 </script>
 
 </body>

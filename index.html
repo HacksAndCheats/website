@@ -290,22 +290,274 @@ body.hovering .cursor-dot {
 
 .bottom-content{ position:fixed; bottom:0; left:0; width:100%; display:flex; flex-direction:column; align-items:center; opacity:0; pointer-events:none; transition:opacity .5s; }
 
+.community-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 20px;
+}
+
+.discord-widget-container {
+  background: rgba(255,255,255,.05);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(99,102,241,.4);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 0 30px rgba(99,102,241,.35);
+}
+
+.widget-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  color: #e5e7eb;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+.channel-widget {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #2b2d31;
+}
+
+.discord-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: rgba(0,0,0,.3);
+  border: 1px solid rgba(99,102,241,.3);
+  border-radius: 12px;
+  padding: 16px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.stats-header {
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(99,102,241,.3);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.stat-label {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.stat-value {
+  color: #6366f1;
+  font-weight: 700;
+  font-size: 15px;
+  text-shadow: 0 0 10px rgba(99,102,241,.6);
+}
+
+.members-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.member-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,0,0,.3);
+  border: 1px solid rgba(99,102,241,.3);
+  border-radius: 10px;
+  padding: 8px;
+  transition: .2s;
+}
+
+.member-card:hover {
+  background: rgba(99,102,241,.2);
+  border-color: #6366f1;
+  transform: translateY(-2px);
+}
+
+.member-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #6366f1;
+  box-shadow: 0 0 10px rgba(99,102,241,.4);
+}
+
+.member-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.member-name {
+  color: #e5e7eb;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-status {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.status-online { color: #10b981; }
+.status-idle { color: #f59e0b; }
+.status-dnd { color: #ef4444; }
+
+.discord-stats::-webkit-scrollbar {
+  width: 8px;
+}
+
+.discord-stats::-webkit-scrollbar-track {
+  background: rgba(0,0,0,.3);
+  border-radius: 10px;
+}
+
+.discord-stats::-webkit-scrollbar-thumb {
+  background: rgba(99,102,241,.5);
+  border-radius: 10px;
+}
+
+.discord-stats::-webkit-scrollbar-thumb:hover {
+  background: rgba(99,102,241,.7);
+}
+
  .dev-link {
-  color: #ffffff !important; /* Blanc pur */
+  color: #ffffff !important;
   text-decoration: none;
-  font-weight: 600; /* Un peu plus épais pour la lisibilité */
+  font-weight: 600;
   transition: opacity 0.2s;
 }
 
 .dev-link:hover {
-  opacity: 0.8; /* Petit effet au survol */
+  opacity: 0.8;
 }
 
 .bottom-content.visible{ opacity:1; pointer-events:auto; }  
 .bottom-sections{ display:flex; justify-content:center; gap:30px; font-size:13px; color:#9ca3af; margin-bottom:10px; }  
 .bottom-gif{ width:100%; max-height:90px; object-fit:contain; }  
 
-@media(max-width:700px){ .title{font-size:38px} .glass{min-width:280px} }
+@media(max-width:700px){ 
+  .title{font-size:38px} 
+  .glass{min-width:280px}
+  
+  /* Topbar mobile */
+  .topbar-pill{
+    width:95%;
+    padding:8px 15px;
+    flex-direction:column;
+    gap:10px;
+  }
+  
+  .topbar-left{
+    flex-direction:column;
+    gap:10px;
+    width:100%;
+  }
+  
+  .topbar-left nav{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  
+  .topbar-left nav a{
+    margin-right:0;
+    font-size:14px;
+  }
+  
+  .brand{
+    font-size:18px;
+  }
+  
+  /* Center content */
+  .center{
+    padding:100px 15px 150px;
+    gap:25px;
+  }
+  
+  .logo-orb{
+    width:100px;
+    height:100px;
+  }
+  
+  .subtitle{
+    font-size:14px;
+    padding:0 10px;
+  }
+  
+  /* Buttons */
+  .btn{
+    font-size:14px;
+    padding:8px 14px;
+  }
+  
+  .btn img{
+    width:18px;
+  }
+  
+  /* Image section */
+  #image-section{
+    padding:0 10px;
+  }
+  
+  /* Bottom content */
+  .bottom-sections{
+    flex-direction:column;
+    gap:10px;
+    font-size:12px;
+    text-align:center;
+  }
+  
+  .bottom-gif{
+    max-height:60px;
+  }
+  
+  /* Splash screen */
+  .splash-logo{
+    width:120px;
+    height:120px;
+  }
+  
+  .splash-title{
+    font-size:24px;
+  }
+  
+  .enter-text{
+    font-size:14px;
+  }
+}
+
+@media(max-width:480px){
+  .title{font-size:28px}
+  
+  .glass{
+    min-width:auto;
+    width:95%;
+    padding:15px;
+  }
+  
+  .input{
+    font-size:16px;
+  }
+  
+  .topbar-left nav a{
+    font-size:12px;
+  }
+}
 
 .topbar{
   position:fixed;
@@ -370,6 +622,8 @@ body.hovering .cursor-dot {
       <nav>
         <a class="active" href="index.html">Home</a>
         <a href="based.html">Services</a>
+        <a href="community.html">Community</a>
+        <a href="discord.html">Backup</a>
       </nav>
     </div>
     <div class="topbar-right">
@@ -406,10 +660,6 @@ What we offer for free:<br>• Regularly updated cheats and game enhancement too
       Join Our Discord
     </a>
   </div>
-
-  <div class="glass" style="animation-delay: 1s;">
-    <textarea class="simple-text">salutcestmden</textarea>
-  </div>  
 
   <div id="image-section"> 
     <div class="reveal-wrapper" id="reveal">
@@ -639,6 +889,85 @@ addEventListener("scroll", () => {
     scrollY >= s - 20 ? bottom.classList.add("visible") : bottom.classList.remove("visible"); 
   }
 });
+
+/* Discord Stats Widget */
+async function updateDiscordStats() {
+  try {
+    // Utilisation de l'API Invite pour avoir le total des membres
+    const inviteResponse = await fetch('https://discord.com/api/v9/invites/hacksandcheats?with_counts=true');
+    if (inviteResponse.ok) {
+      const inviteData = await inviteResponse.json();
+      console.log('Invite Data:', inviteData);
+      
+      if (inviteData.approximate_member_count) {
+        document.getElementById('member-count').textContent = inviteData.approximate_member_count.toLocaleString();
+      }
+      if (inviteData.approximate_presence_count) {
+        document.getElementById('online-count').textContent = inviteData.approximate_presence_count.toLocaleString();
+      }
+    }
+    
+    // Essai avec l'API Widget (nécessite que le widget soit activé sur le serveur)
+    const widgetResponse = await fetch('https://discord.com/api/guilds/1445500722828279918/widget.json');
+    console.log('Widget Response Status:', widgetResponse.status);
+    
+    if (widgetResponse.ok) {
+      const widgetData = await widgetResponse.json();
+      console.log('Widget Data:', widgetData);
+      
+      // Mise à jour du nombre de membres en ligne (plus précis que l'invite)
+      if (widgetData.presence_count !== undefined) {
+        document.getElementById('online-count').textContent = widgetData.presence_count.toLocaleString();
+      }
+      
+      // Affichage des membres en ligne
+      const membersList = document.getElementById('members-list');
+      membersList.innerHTML = '';
+      
+      if (widgetData.members && widgetData.members.length > 0) {
+        widgetData.members.forEach(member => {
+          const memberCard = document.createElement('div');
+          memberCard.className = 'member-card';
+          
+          const statusClass = member.status === 'online' ? 'status-online' : 
+                             member.status === 'idle' ? 'status-idle' : 
+                             member.status === 'dnd' ? 'status-dnd' : '';
+          
+          const statusEmoji = member.status === 'online' ? '🟢' : 
+                             member.status === 'idle' ? '🟡' : 
+                             member.status === 'dnd' ? '🔴' : '⚫';
+          
+          memberCard.innerHTML = `
+            <img src="${member.avatar_url}" alt="${member.username}" class="member-avatar">
+            <div class="member-info">
+              <div class="member-name">${member.username}</div>
+              <div class="member-status ${statusClass}">${statusEmoji} ${member.status || 'online'}</div>
+            </div>
+          `;
+          
+          membersList.appendChild(memberCard);
+        });
+      } else {
+        membersList.innerHTML = '<div style="color: #9ca3af; font-size: 12px; text-align: center; padding: 10px;">Activez le widget Discord dans les paramètres du serveur pour voir les membres en ligne</div>';
+      }
+    } else {
+      const membersList = document.getElementById('members-list');
+      membersList.innerHTML = '<div style="color: #9ca3af; font-size: 12px; text-align: center; padding: 10px;">⚠️ Widget Discord non activé. Allez dans Paramètres du serveur → Widget → Activer le widget</div>';
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération des stats Discord:', error);
+    document.getElementById('member-count').textContent = 'N/A';
+    document.getElementById('online-count').textContent = 'N/A';
+    const membersList = document.getElementById('members-list');
+    membersList.innerHTML = '<div style="color: #ef4444; font-size: 12px; text-align: center; padding: 10px;">Erreur de connexion à Discord</div>';
+  }
+}
+
+// Mise à jour initiale
+updateDiscordStats();
+
+// Mise à jour toutes les 30 secondes
+setInterval(updateDiscordStats, 30000);
 </script>
 </body>
 </html>

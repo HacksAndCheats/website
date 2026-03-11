@@ -249,27 +249,27 @@ img{display:block;max-width:100%}
 .reveal-handle{ position:absolute; top:50%; left:50%; width:26px; height:26px; border-radius:50%; background:#6366f1; transform:translate(-50%,-50%); box-shadow:0 0 15px #6366f1; }  
 
 /* --- CURSOR SYSTEM (RESTORED GLOW) --- */
-.cursor-dot{ 
-  position:fixed; 
-  width:10px; 
-  height:10px; 
-  background:white; 
-  border-radius:50%; 
-  pointer-events:none; 
-  z-index:10000; 
+.cursor-dot { 
+  position: fixed; 
+  width: 10px; 
+  height: 10px; 
+  background: white; 
+  border-radius: 50%; 
+  pointer-events: none; /* Permet de cliquer à travers */
+  z-index: 100001; /* Plus haut que le splash screen */
   transform: translate(-50%, -50%);
   transition: width 0.2s, height 0.2s, background 0.2s, box-shadow 0.2s;
 }  
-.cursor-glow{
-position:fixed;
-width:60px;
-height:60px;
-background:radial-gradient(circle, white, transparent 60%);
-border-radius:50%;
-filter:blur(6px);
-pointer-events:none;
-z-index:9998;
-transform: translate(-50%, -50%);
+.cursor-glow {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, white, transparent 60%);
+  border-radius: 50%;
+  filter: blur(6px);
+  pointer-events: none;
+  z-index: 100000;
+  transform: translate(-50%, -50%);
 }
 
 .cursor-particle {
@@ -1074,3 +1074,4 @@ window.addEventListener('beforeunload', () => {
 </script>
 </body>
 </html>
+

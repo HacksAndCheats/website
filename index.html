@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="google-site-verification" content="8NAqm4m-TVhVrJAQUlngH9IwG4WWJ7Yl7oo0Ju1XWJc" />
 <meta charset="UTF-8">
+<meta name="google-site-verification" content="8NAqm4m-TVhVrJAQUlngH9IwG4WWJ7Yl7oo0Ju1XWJc" />
 <title>H&C on TOP</title>
 <link rel="icon" type="image/jpeg" href="https://i.imgur.com/S4unQ5F.jpeg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +30,7 @@ body{
   pointer-events: none;
 }
 
-a, button, .btn, #splash-screen, .reveal-bar, .reveal-handle, textarea, .topbar-right img, .topbar-left nav a {
+a, button, .btn, .reveal-bar, .reveal-handle, textarea, .topbar-right img, .topbar-left nav a {
     cursor: none !important;
 }
 
@@ -46,7 +46,8 @@ a, button, .btn, #splash-screen, .reveal-bar, .reveal-handle, textarea, .topbar-
   align-items: center;
   transition: opacity 0.8s ease, visibility 0.8s;
   perspective: 1000px;
-  overflow: hidden; /* Important pour la pluie */
+  overflow: hidden;
+  cursor: pointer !important;
 }
 
 /* Rain Canvas */
@@ -818,7 +819,13 @@ const splashLogo = document.getElementById('splash-logo');
 
 splash.addEventListener('click', () => {
   splash.classList.add('fade-out');
-  setTimeout(() => { splash.style.display = 'none'; }, 800);
+  setTimeout(() => { 
+    splash.style.display = 'none';
+    // Démarrer la musique après la fermeture du splash
+    const iframe = document.getElementById("sc-player");
+    const widget = SC.Widget(iframe);
+    widget.play();
+  }, 800);
 });
 
 /* Custom Cursor & Effects */
@@ -832,7 +839,7 @@ addEventListener("mousemove", e => {
   dot.style.left = mx + "px"; 
   dot.style.top = my + "px"; 
 
-  if (splashLogo && splash.style.display !== 'none') {
+  if (splashLogo && splash && !splash.classList.contains('fade-out')) {
       const { innerWidth, innerHeight } = window;
       const rotationY = ((mx / innerWidth) - 0.5) * 60; 
       const rotationX = ((my / innerHeight) - 0.5) * -60;
@@ -868,6 +875,7 @@ function createParticle(x, y) {
 }
 
 (function loop(){
+  // On réduit à 0.08 pour plus de douceur
   gx += (mx - gx) * 0.08;
   gy += (my - gy) * 0.08;
   glow.style.left = gx + "px";
@@ -917,6 +925,85 @@ addEventListener("scroll", () => {
     scrollY >= s - 20 ? bottom.classList.add("visible") : bottom.classList.remove("visible"); 
   }
 });
+
+/* Discord Stats Widget */
+async function updateDiscordStats() {
+  try {
+    // Utilisation de l'API Invite pour avoir le total des membres
+    const inviteResponse = await fetch('https://discord.com/api/v9/invites/hacksandcheats?with_counts=true');
+    if (inviteResponse.ok) {
+      const inviteData = await inviteResponse.json();
+      console.log('Invite Data:', inviteData);
+      
+      if (inviteData.approximate_member_count) {
+        document.getElementById('member-count').textContent = inviteData.approximate_member_count.toLocaleString();
+      }
+      if (inviteData.approximate_presence_count) {
+        document.getElementById('online-count').textContent = inviteData.approximate_presence_count.toLocaleString();
+      }
+    }
+    
+    // Essai avec l'API Widget (nécessite que le widget soit activé sur le serveur)
+    const widgetResponse = await fetch('https://discord.com/api/guilds/1445500722828279918/widget.json');
+    console.log('Widget Response Status:', widgetResponse.status);
+    
+    if (widgetResponse.ok) {
+      const widgetData = await widgetResponse.json();
+      console.log('Widget Data:', widgetData);
+      
+      // Mise à jour du nombre de membres en ligne (plus précis que l'invite)
+      if (widgetData.presence_count !== undefined) {
+        document.getElementById('online-count').textContent = widgetData.presence_count.toLocaleString();
+      }
+      
+      // Affichage des membres en ligne
+      const membersList = document.getElementById('members-list');
+      membersList.innerHTML = '';
+      
+      if (widgetData.members && widgetData.members.length > 0) {
+        widgetData.members.forEach(member => {
+          const memberCard = document.createElement('div');
+          memberCard.className = 'member-card';
+          
+          const statusClass = member.status === 'online' ? 'status-online' : 
+                             member.status === 'idle' ? 'status-idle' : 
+                             member.status === 'dnd' ? 'status-dnd' : '';
+          
+          const statusEmoji = member.status === 'online' ? '🟢' : 
+                             member.status === 'idle' ? '🟡' : 
+                             member.status === 'dnd' ? '🔴' : '⚫';
+          
+          memberCard.innerHTML = `
+            <img src="${member.avatar_url}" alt="${member.username}" class="member-avatar">
+            <div class="member-info">
+              <div class="member-name">${member.username}</div>
+              <div class="member-status ${statusClass}">${statusEmoji} ${member.status || 'online'}</div>
+            </div>
+          `;
+          
+          membersList.appendChild(memberCard);
+        });
+      } else {
+        membersList.innerHTML = '<div style="color: #9ca3af; font-size: 12px; text-align: center; padding: 10px;">Activez le widget Discord dans les paramètres du serveur pour voir les membres en ligne</div>';
+      }
+    } else {
+      const membersList = document.getElementById('members-list');
+      membersList.innerHTML = '<div style="color: #9ca3af; font-size: 12px; text-align: center; padding: 10px;">⚠️ Widget Discord non activé. Allez dans Paramètres du serveur → Widget → Activer le widget</div>';
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération des stats Discord:', error);
+    document.getElementById('member-count').textContent = 'N/A';
+    document.getElementById('online-count').textContent = 'N/A';
+    const membersList = document.getElementById('members-list');
+    membersList.innerHTML = '<div style="color: #ef4444; font-size: 12px; text-align: center; padding: 10px;">Erreur de connexion à Discord</div>';
+  }
+}
+
+// Mise à jour initiale
+updateDiscordStats();
+
+// Mise à jour toutes les 30 secondes
+setInterval(updateDiscordStats, 30000);
 
 /* Musique SoundCloud avec synchronisation */
 const widget = SC.Widget(document.getElementById("sc-player"));

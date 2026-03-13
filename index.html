@@ -250,27 +250,27 @@ img{display:block;max-width:100%}
 .reveal-handle{ position:absolute; top:50%; left:50%; width:26px; height:26px; border-radius:50%; background:#6366f1; transform:translate(-50%,-50%); box-shadow:0 0 15px #6366f1; }  
 
 /* --- CURSOR SYSTEM (RESTORED GLOW) --- */
-.cursor-dot { 
-  position: fixed; 
-  width: 10px; 
-  height: 10px; 
-  background: white; 
-  border-radius: 50%; 
-  pointer-events: none; /* Permet de cliquer à travers */
-  z-index: 100001; /* Plus haut que le splash screen */
+.cursor-dot{ 
+  position:fixed; 
+  width:10px; 
+  height:10px; 
+  background:white; 
+  border-radius:50%; 
+  pointer-events:none; 
+  z-index:10000; 
   transform: translate(-50%, -50%);
   transition: width 0.2s, height 0.2s, background 0.2s, box-shadow 0.2s;
 }  
-.cursor-glow {
-  position: fixed;
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle, white, transparent 60%);
-  border-radius: 50%;
-  filter: blur(6px);
-  pointer-events: none;
-  z-index: 100000;
-  transform: translate(-50%, -50%);
+.cursor-glow{
+position:fixed;
+width:60px;
+height:60px;
+background:radial-gradient(circle, white, transparent 60%);
+border-radius:50%;
+filter:blur(6px);
+pointer-events:none;
+z-index:9998;
+transform: translate(-50%, -50%);
 }
 
 .cursor-particle {
@@ -815,12 +815,9 @@ animateBg();
 /* Splash Screen & Music Logic */
 const splash = document.getElementById('splash-screen');
 const splashLogo = document.getElementById('splash-logo');
-const iframe = document.getElementById("sc-player");
-const widget = SC.Widget(iframe);
 
 splash.addEventListener('click', () => {
   splash.classList.add('fade-out');
-  widget.play(); 
   setTimeout(() => { splash.style.display = 'none'; }, 800);
 });
 
@@ -871,7 +868,6 @@ function createParticle(x, y) {
 }
 
 (function loop(){
-  // On réduit à 0.08 pour plus de douceur
   gx += (mx - gx) * 0.08;
   gy += (my - gy) * 0.08;
   glow.style.left = gx + "px";
@@ -921,85 +917,6 @@ addEventListener("scroll", () => {
     scrollY >= s - 20 ? bottom.classList.add("visible") : bottom.classList.remove("visible"); 
   }
 });
-
-/* Discord Stats Widget */
-async function updateDiscordStats() {
-  try {
-    // Utilisation de l'API Invite pour avoir le total des membres
-    const inviteResponse = await fetch('https://discord.com/api/v9/invites/hacksandcheats?with_counts=true');
-    if (inviteResponse.ok) {
-      const inviteData = await inviteResponse.json();
-      console.log('Invite Data:', inviteData);
-      
-      if (inviteData.approximate_member_count) {
-        document.getElementById('member-count').textContent = inviteData.approximate_member_count.toLocaleString();
-      }
-      if (inviteData.approximate_presence_count) {
-        document.getElementById('online-count').textContent = inviteData.approximate_presence_count.toLocaleString();
-      }
-    }
-    
-    // Essai avec l'API Widget (nécessite que le widget soit activé sur le serveur)
-    const widgetResponse = await fetch('https://discord.com/api/guilds/1445500722828279918/widget.json');
-    console.log('Widget Response Status:', widgetResponse.status);
-    
-    if (widgetResponse.ok) {
-      const widgetData = await widgetResponse.json();
-      console.log('Widget Data:', widgetData);
-      
-      // Mise à jour du nombre de membres en ligne (plus précis que l'invite)
-      if (widgetData.presence_count !== undefined) {
-        document.getElementById('online-count').textContent = widgetData.presence_count.toLocaleString();
-      }
-      
-      // Affichage des membres en ligne
-      const membersList = document.getElementById('members-list');
-      membersList.innerHTML = '';
-      
-      if (widgetData.members && widgetData.members.length > 0) {
-        widgetData.members.forEach(member => {
-          const memberCard = document.createElement('div');
-          memberCard.className = 'member-card';
-          
-          const statusClass = member.status === 'online' ? 'status-online' : 
-                             member.status === 'idle' ? 'status-idle' : 
-                             member.status === 'dnd' ? 'status-dnd' : '';
-          
-          const statusEmoji = member.status === 'online' ? '🟢' : 
-                             member.status === 'idle' ? '🟡' : 
-                             member.status === 'dnd' ? '🔴' : '⚫';
-          
-          memberCard.innerHTML = `
-            <img src="${member.avatar_url}" alt="${member.username}" class="member-avatar">
-            <div class="member-info">
-              <div class="member-name">${member.username}</div>
-              <div class="member-status ${statusClass}">${statusEmoji} ${member.status || 'online'}</div>
-            </div>
-          `;
-          
-          membersList.appendChild(memberCard);
-        });
-      } else {
-        membersList.innerHTML = '<div style="color: #9ca3af; font-size: 12px; text-align: center; padding: 10px;">Activez le widget Discord dans les paramètres du serveur pour voir les membres en ligne</div>';
-      }
-    } else {
-      const membersList = document.getElementById('members-list');
-      membersList.innerHTML = '<div style="color: #9ca3af; font-size: 12px; text-align: center; padding: 10px;">⚠️ Widget Discord non activé. Allez dans Paramètres du serveur → Widget → Activer le widget</div>';
-    }
-  } catch (error) {
-    console.error('Erreur lors de la récupération des stats Discord:', error);
-    document.getElementById('member-count').textContent = 'N/A';
-    document.getElementById('online-count').textContent = 'N/A';
-    const membersList = document.getElementById('members-list');
-    membersList.innerHTML = '<div style="color: #ef4444; font-size: 12px; text-align: center; padding: 10px;">Erreur de connexion à Discord</div>';
-  }
-}
-
-// Mise à jour initiale
-updateDiscordStats();
-
-// Mise à jour toutes les 30 secondes
-setInterval(updateDiscordStats, 30000);
 
 /* Musique SoundCloud avec synchronisation */
 const widget = SC.Widget(document.getElementById("sc-player"));
@@ -1075,4 +992,3 @@ window.addEventListener('beforeunload', () => {
 </script>
 </body>
 </html>
-

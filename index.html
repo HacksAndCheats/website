@@ -456,50 +456,33 @@ body.hovering .cursor-dot {
   .glass{min-width:280px}
   
   /* Topbar mobile */
-  .topbar{
-    top:10px;
-  }
-  
   .topbar-pill{
-    width:96%;
-    padding:12px 15px;
-    background:rgba(0,0,0,.75);
-    backdrop-filter:blur(20px);
+    width:95%;
+    padding:8px 15px;
+    flex-direction:column;
+    gap:10px;
   }
   
   .topbar-left{
-    flex-direction:row;
-    gap:15px;
+    flex-direction:column;
+    gap:10px;
     width:100%;
-    flex-wrap:wrap;
-    justify-content:space-between;
   }
   
   .topbar-left nav{
     display:flex;
-    gap:8px;
+    gap:10px;
     flex-wrap:wrap;
+    justify-content:center;
   }
   
   .topbar-left nav a{
     margin-right:0;
-    font-size:13px;
-    padding:4px 8px;
-    background:rgba(99,102,241,.2);
-    border-radius:8px;
-    white-space:nowrap;
-  }
-  
-  .topbar-left nav a.active{
-    background:rgba(99,102,241,.5);
+    font-size:14px;
   }
   
   .brand{
-    font-size:16px;
-  }
-  
-  .topbar-right img{
-    width:20px !important;
+    font-size:18px;
   }
   
   /* Center content */

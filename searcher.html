@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="google-site-verification" content="8NAqm4m-TVhVrJAQUlngH9IwG4WWJ7Yl7oo0Ju1XWJc" />
+<title>H&C on TOP ‖ Searcher</title>
+<link rel="icon" type="image/jpeg" href="https://i.imgur.com/S4unQ5F.jpeg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:radial-gradient(circle at bottom,#5b21b6 0%,#0b0620 35%,#02020a 70%);
+  background-attachment:fixed;
+  color:#e5e7eb;
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:none;
+  scroll-behavior:smooth;
+}
+#particle-canvas{position:fixed;inset:0;z-index:-1;pointer-events:none}
+a,button,.btn,textarea,input,.topbar-right img,.topbar-left nav a{cursor:none !important}
+.stars{
+  position:fixed;inset:0;
+  background:radial-gradient(circle,#ffffff22 1px,transparent 1px);
+  background-size:60px 60px;opacity:.25;z-index:-1;pointer-events:none;
+}
+.topbar{position:fixed;top:18px;left:0;width:100%;display:flex;justify-content:center;z-index:3000;transition:.35s ease}
+.topbar-pill{
+  width:92%;max-width:1200px;padding:10px 22px;border-radius:999px;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.12);box-shadow:0 0 30px rgba(99,102,241,.25);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.brand{font-family:Orbitron,sans-serif;font-weight:700;font-size:20px}
+.topbar-left{display:flex;align-items:center;gap:22px}
+.topbar-left nav a{color:#e5e7eb;text-decoration:none;margin-right:15px;font-weight:500;transition:.2s}
+.topbar-left nav a:hover{color:#6366f1}
+.topbar-left nav a.active{color:#6366f1}
+
+.center{display:flex;flex-direction:column;align-items:center;gap:35px;padding:120px 20px 120px}
+.title{
+  font-family:Orbitron;font-size:54px;
+  background:linear-gradient(135deg,#6366f1,#ec4899);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.lines{width:100%;max-width:600px;height:2px;background:linear-gradient(90deg,transparent,#6366f1,transparent);opacity:.4}
+
+.search-box{
+  width:100%;max-width:700px;
+  background:rgba(255,255,255,.05);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(99,102,241,.4);
+  border-radius:18px;padding:30px;
+  box-shadow:0 0 30px rgba(99,102,241,.3);
+  animation:fadeInUp .6s ease forwards;opacity:0;
+}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.search-label{font-family:Orbitron;font-size:14px;color:#9ca3af;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+
+.search-row{display:flex;gap:10px}
+.search-input{
+  flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(99,102,241,.4);
+  border-radius:10px;padding:12px 16px;color:#e5e7eb;font-size:15px;
+  font-family:Inter,sans-serif;outline:none;transition:.3s;
+}
+.search-input:focus{border-color:#6366f1;box-shadow:0 0 15px rgba(99,102,241,.3)}
+.search-input::placeholder{color:#4b5563}
+
+.type-select{
+  background:rgba(0,0,0,.4);border:1px solid rgba(99,102,241,.4);
+  border-radius:10px;padding:12px 14px;color:#e5e7eb;font-size:14px;
+  font-family:Inter,sans-serif;outline:none;transition:.3s;
+}
+.type-select:focus{border-color:#6366f1}
+.type-select option{background:#0b0620}
+
+.search-btn{
+  background:linear-gradient(135deg,#6366f1,#ec4899);
+  border:none;border-radius:10px;padding:12px 24px;
+  color:white;font-family:Orbitron,sans-serif;font-size:13px;
+  font-weight:700;transition:.3s;white-space:nowrap;
+}
+.search-btn:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(99,102,241,.5)}
+.search-btn:disabled{opacity:.5;transform:none}
+
+.results-box{
+  width:100%;max-width:700px;
+  display:none;
+  background:rgba(255,255,255,.05);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(99,102,241,.4);
+  border-radius:18px;padding:25px;
+  box-shadow:0 0 30px rgba(99,102,241,.3);
+  animation:fadeInUp .4s ease forwards;
+}
+
+.results-header{
+  font-family:Orbitron;font-size:16px;color:#6366f1;
+  margin-bottom:20px;display:flex;align-items:center;gap:10px;
+}
+
+.result-count{
+  background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);
+  border-radius:20px;padding:3px 12px;font-size:13px;color:#a5b4fc;
+}
+
+.result-item{
+  background:rgba(0,0,0,.3);border:1px solid rgba(99,102,241,.2);
+  border-radius:12px;padding:15px;margin-bottom:12px;transition:.3s;
+}
+.result-item:hover{border-color:#6366f1;box-shadow:0 0 15px rgba(99,102,241,.2)}
+.result-item:last-child{margin-bottom:0}
+
+.result-source{
+  font-family:Orbitron;font-size:12px;color:#ec4899;
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;
+}
+.result-fields{display:flex;flex-wrap:wrap;gap:8px}
+.result-field{
+  background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);
+  border-radius:8px;padding:5px 10px;font-size:13px;color:#e5e7eb;
+}
+.result-field span{color:#9ca3af;margin-right:4px}
+
+.no-results{text-align:center;color:#9ca3af;padding:20px;font-size:15px}
+.error-msg{text-align:center;color:#ef4444;padding:20px;font-size:14px}
+
+.disclaimer{
+  width:100%;max-width:700px;
+  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);
+  border-radius:12px;padding:15px 20px;font-size:13px;color:#9ca3af;
+  text-align:center;line-height:1.6;
+}
+
+.cursor-dot{position:fixed;width:10px;height:10px;background:white;border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s,box-shadow .2s}
+.cursor-glow{position:fixed;width:60px;height:60px;background:radial-gradient(circle,white,transparent 60%);border-radius:50%;filter:blur(6px);pointer-events:none;z-index:9998;transform:translate(-50%,-50%)}
+.cursor-particle{position:fixed;background:white;border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%)}
+body.hovering .cursor-dot{width:20px;height:20px;background:#00ff99;box-shadow:0 0 20px #00ff99,0 0 40px rgba(0,255,153,.5)}
+
+.bottom-content{position:fixed;bottom:0;left:0;width:100%;display:flex;flex-direction:column;align-items:center;opacity:0;pointer-events:none;transition:.5s}
+.bottom-content.visible{opacity:1;pointer-events:auto}
+.dev-link{color:#ffffff !important;text-decoration:none;font-weight:600;transition:opacity .2s}
+.dev-link:hover{opacity:.8}
+.bottom-sections{display:flex;gap:30px;font-size:13px;color:#9ca3af;margin-bottom:10px}
+.bottom-gif{width:100%;max-height:90px;object-fit:contain}
+
+@media(max-width:700px){
+  .title{font-size:38px}
+  .topbar-pill{width:95%;padding:8px 15px;flex-direction:column;gap:10px}
+  .topbar-left{flex-direction:column;gap:10px;width:100%}
+  .topbar-left nav{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .topbar-left nav a{margin-right:0;font-size:14px}
+  .brand{font-size:18px}
+  .center{padding:100px 15px 100px}
+  .search-row{flex-direction:column}
+  .bottom-sections{flex-direction:column;gap:10px;font-size:12px;text-align:center}
+  .bottom-gif{max-height:60px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+<div class="stars"></div>
+
+<div class="topbar">
+  <div class="topbar-pill">
+    <div class="topbar-left">
+      <span class="brand">H&C</span>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="based.html">Services</a>
+        <a href="community.html">Community</a>
+        <a href="discord.html">Backup</a>
+        <a class="active" href="searcher.html">Searcher</a>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <a href="https://dsc.gg/hacks-and-cheats" target="_blank">
+        <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e278299a53f5bf88615e90_Symbol.svg" style="width:22px;">
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="center">
+  <div class="title">Searcher</div>
+  <div class="lines"></div>
+
+  <div class="disclaimer">
+    ⚠️ This tool uses the <a href="https://proxynova.com" target="_blank" style="color:#6366f1">ProxyNova COMB</a> database to search leaked credentials. For educational and security awareness purposes only.
+  </div>
+
+  <div class="search-box">
+    <div class="search-label">Search breached databases</div>
+    <div class="search-row" style="margin-bottom:12px">
+      <input class="search-input" id="search-input" type="text" placeholder="email, username...">
+      <button class="search-btn" id="search-btn" onclick="doSearch()">SEARCH</button>
+    </div>
+  </div>
+
+  <div class="results-box" id="results-box">
+    <div class="results-header">
+      <span>Results</span>
+      <span class="result-count" id="result-count">0</span>
+    </div>
+    <div id="results-list"></div>
+    <div id="pagination" style="display:flex;justify-content:center;align-items:center;gap:12px;margin-top:16px"></div>
+  </div>
+</div>
+
+<iframe id="sc-player" width="1" height="1" style="opacity:0;position:absolute" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/ayhanbalaoghlanli/tiki_tiki-slowed-reverb&auto_play=true"></iframe>
+<script src="https://w.soundcloud.com/player/api.js"></script>
+
+<div class="bottom-content" id="bottom-content">
+  <div class="bottom-sections">
+    <a href="https://guns.lol/safwan120" target="_blank" class="dev-link">Developped by S₳₣₩₳₦₁₂₀</a>
+    <span>2026-H&C-2026</span>
+    <span>Made with ❤️</span>
+  </div>
+  <img class="bottom-gif" src="https://i.imgur.com/ZBm70Dt.gif">
+</div>
+
+<div class="cursor-dot"></div>
+<div class="cursor-glow"></div>
+
+<script>
+const PER_PAGE = 20;
+let currentPage = 1;
+let totalResults = 0;
+let lastTerm = '';
+
+async function doSearch(page = 1) {
+  const term = page === 1 ? document.getElementById('search-input').value.trim() : lastTerm;
+  const btn = document.getElementById('search-btn');
+  const box = document.getElementById('results-box');
+  const list = document.getElementById('results-list');
+  const count = document.getElementById('result-count');
+  const pagination = document.getElementById('pagination');
+
+  if (!term) return;
+  lastTerm = term;
+  currentPage = page;
+
+  btn.disabled = true;
+  btn.textContent = '...';
+  box.style.display = 'block';
+  list.innerHTML = '<div class="no-results">Searching...</div>';
+  pagination.innerHTML = '';
+  count.textContent = '?';
+
+  try {
+    const start = (page - 1) * PER_PAGE;
+    const res = await fetch(`https://api.proxynova.com/comb?query=${encodeURIComponent(term)}&start=${start}&limit=${PER_PAGE}`);
+
+    if (res.status === 429) {
+      list.innerHTML = '<div class="error-msg">⏳ Rate limited. Wait a moment and try again.</div>';
+      count.textContent = '0';
+      btn.disabled = false; btn.textContent = 'SEARCH';
+      return;
+    }
+    if (!res.ok) {
+      list.innerHTML = `<div class="error-msg">⚠️ API error ${res.status}.</div>`;
+      count.textContent = '0';
+      btn.disabled = false; btn.textContent = 'SEARCH';
+      return;
+    }
+
+    const data = await res.json();
+    const lines = data.lines || [];
+    totalResults = data.count ?? lines.length;
+    const totalPages = Math.ceil(totalResults / PER_PAGE);
+
+    count.textContent = totalResults;
+    list.innerHTML = '';
+
+    if (!lines.length) {
+      list.innerHTML = '<div class="no-results">✅ No results found.</div>';
+    } else {
+      lines.forEach(line => {
+        const [emailUser, ...passParts] = line.split(':');
+        const password = passParts.join(':');
+        const domain = emailUser.includes('@') ? emailUser.split('@')[1] : null;
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.innerHTML = `
+          <div class="result-source">🔴 COMB${domain ? ` — ${escHtml(domain)}` : ''}</div>
+          <div class="result-fields">
+            <div class="result-field"><span>login:</span>${escHtml(emailUser)}</div>
+            ${password ? `<div class="result-field"><span>password:</span>${escHtml(password)}</div>` : ''}
+          </div>`;
+        list.appendChild(div);
+      });
+    }
+
+    // Pagination
+    if (totalPages > 1) {
+      const prev = document.createElement('button');
+      prev.className = 'search-btn';
+      prev.textContent = '← Prev';
+      prev.disabled = page <= 1;
+      prev.style.padding = '8px 16px';
+      prev.onclick = () => doSearch(page - 1);
+
+      const info = document.createElement('span');
+      info.style.cssText = 'color:#9ca3af;font-size:13px';
+      info.textContent = `Page ${page} / ${totalPages}`;
+
+      const next = document.createElement('button');
+      next.className = 'search-btn';
+      next.textContent = 'Next →';
+      next.disabled = page >= totalPages;
+      next.style.padding = '8px 16px';
+      next.onclick = () => doSearch(page + 1);
+
+      pagination.appendChild(prev);
+      pagination.appendChild(info);
+      pagination.appendChild(next);
+    }
+
+  } catch(e) {
+    list.innerHTML = '<div class="error-msg">⚠️ Request failed. Try again.</div>';
+    count.textContent = '0';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'SEARCH';
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+/* Particles */
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particlesArray = [];
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+window.addEventListener('resize',resizeCanvas);resizeCanvas();
+class ParticleBg{
+  constructor(){this.reset()}
+  reset(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.size=Math.random()*2+.5;this.speedX=(Math.random()-.5)*.4;this.speedY=(Math.random()-.5)*.4;this.alpha=Math.random()*.5}
+  update(){this.x+=this.speedX;this.y+=this.speedY;if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height)this.reset()}
+  draw(){ctx.fillStyle=`rgba(99,102,241,${this.alpha})`;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill()}
+}
+for(let i=0;i<80;i++)particlesArray.push(new ParticleBg());
+function animateBg(){ctx.clearRect(0,0,canvas.width,canvas.height);particlesArray.forEach(p=>{p.update();p.draw()});requestAnimationFrame(animateBg)}
+animateBg();
+
+/* Cursor */
+const dot=document.querySelector(".cursor-dot");
+const glow=document.querySelector(".cursor-glow");
+let mx=0,my=0,gx=0,gy=0;
+addEventListener("mousemove",e=>{
+  mx=e.clientX;my=e.clientY;
+  dot.style.left=mx+"px";dot.style.top=my+"px";
+  createParticle(mx,my);
+  document.body.classList.toggle('hovering',!!e.target.closest('a,button,.btn,input,select'));
+});
+function createParticle(x,y){
+  const p=document.createElement("div");p.className="cursor-particle";
+  const size=Math.random()*3+1;p.style.width=size+"px";p.style.height=size+"px";
+  p.style.left=x+"px";p.style.top=y+"px";document.body.appendChild(p);
+  const anim=p.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:.8},{transform:`translate(${(Math.random()-.5)*30}px,${(Math.random()-.5)*30}px) scale(0)`,opacity:0}],{duration:800,easing:'ease-out'});
+  anim.onfinish=()=>p.remove();
+}
+(function loop(){gx+=(mx-gx)*.08;gy+=(my-gy)*.08;glow.style.left=gx+"px";glow.style.top=gy+"px";requestAnimationFrame(loop)})();
+
+/* Bottom */
+const bottom=document.getElementById("bottom-content");
+addEventListener("scroll",()=>{
+  const s=document.documentElement.scrollHeight-innerHeight;
+  if(s>0){scrollY>=s-10?bottom.classList.add("visible"):bottom.classList.remove("visible")}
+  else bottom.classList.add("visible");
+});
+window.addEventListener('load',()=>{
+  if(document.documentElement.scrollHeight-innerHeight<=0)bottom.classList.add("visible");
+});
+
+/* Music */
+const widget=SC.Widget(document.getElementById("sc-player"));
+let musicState={isPlaying:false,position:0,lastUpdate:Date.now()};
+function loadMusicState(){const saved=localStorage.getItem('musicState');if(saved){musicState=JSON.parse(saved);if(musicState.isPlaying){musicState.position+=(Date.now()-musicState.lastUpdate)/1000}}}
+function saveMusicState(){musicState.lastUpdate=Date.now();localStorage.setItem('musicState',JSON.stringify(musicState))}
+loadMusicState();
+widget.bind(SC.Widget.Events.READY,function(){
+  if(musicState.isPlaying){widget.seekTo(musicState.position*1000);widget.play()}
+  setInterval(()=>{widget.getPosition(function(pos){musicState.position=pos/1000;widget.isPaused(function(paused){musicState.isPlaying=!paused;saveMusicState()})})},1000);
+});
+document.addEventListener("click",()=>{widget.isPaused(function(paused){if(paused){widget.play();musicState.isPlaying=true;saveMusicState()}})},{once:true});
+window.addEventListener('beforeunload',()=>{widget.getPosition(function(pos){musicState.position=pos/1000;widget.isPaused(function(paused){musicState.isPlaying=!paused;saveMusicState()})})});
+</script>
+</body>
+</html>

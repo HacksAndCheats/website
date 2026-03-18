@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="google-site-verification" content="8NAqm4m-TVhVrJAQUlngH9IwG4WWJ7Yl7oo0Ju1XWJc" />
+<title>H&C on TOP ‖ Showcase</title>
+<link rel="icon" type="image/jpeg" href="https://i.imgur.com/S4unQ5F.jpeg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:radial-gradient(circle at bottom,#5b21b6 0%,#0b0620 35%,#02020a 70%);
+  background-attachment:fixed;
+  color:#e5e7eb;
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:none;
+  scroll-behavior:smooth;
+}
+
+#particle-canvas{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+}
+
+a,button,.btn,textarea,.topbar-right img,.topbar-left nav a{cursor:none !important}
+
+.stars{
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle,#ffffff22 1px,transparent 1px);
+  background-size:60px 60px;
+  opacity:.25;
+  z-index:-1;
+  pointer-events:none;
+}
+
+.topbar{
+  position:fixed;
+  top:18px;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  z-index:3000;
+  transition:.35s ease;
+}
+.topbar-pill{
+  width:92%;
+  max-width:1200px;
+  padding:10px 22px;
+  border-radius:999px;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 0 30px rgba(99,102,241,.25);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.brand{
+  font-family:Orbitron,sans-serif;
+  font-weight:700;
+  font-size:20px;
+}
+.topbar-left{
+  display:flex;
+  align-items:center;
+  gap:22px;
+}
+.topbar-left nav a{
+  color:#e5e7eb;
+  text-decoration:none;
+  margin-right:15px;
+  font-weight:500;
+  transition:.2s;
+}
+.topbar-left nav a:hover{color:#6366f1}
+.topbar-left nav a.active{color:#6366f1}
+
+.center{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:35px;
+  padding:120px 20px 100px;
+}
+
+.title{
+  font-family:Orbitron;
+  font-size:54px;
+  background:linear-gradient(135deg,#6366f1,#ec4899);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.lines{
+  width:100%;
+  max-width:600px;
+  height:2px;
+  background:linear-gradient(90deg,transparent,#6366f1,transparent);
+  opacity:.4;
+}
+
+.video-wrapper{
+  width:100%;
+  max-width:900px;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(99,102,241,.4);
+  box-shadow:0 0 40px rgba(99,102,241,.4);
+  aspect-ratio:16/9;
+  animation:fadeInUp .6s ease forwards;
+  opacity:0;
+}
+
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.video-wrapper iframe,
+.video-wrapper video{
+  width:100%;
+  height:100%;
+  border:none;
+  display:block;
+}
+
+.cursor-dot{
+  position:fixed;
+  width:10px;
+  height:10px;
+  background:white;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:10000;
+  transform:translate(-50%,-50%);
+  transition:width .2s,height .2s,background .2s,box-shadow .2s;
+}
+.cursor-glow{
+  position:fixed;
+  width:60px;
+  height:60px;
+  background:radial-gradient(circle,white,transparent 60%);
+  border-radius:50%;
+  filter:blur(6px);
+  pointer-events:none;
+  z-index:9998;
+  transform:translate(-50%,-50%);
+}
+.cursor-particle{
+  position:fixed;
+  background:white;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9998;
+  transform:translate(-50%,-50%);
+}
+body.hovering .cursor-dot{
+  width:20px;
+  height:20px;
+  background:#00ff99;
+  box-shadow:0 0 20px #00ff99,0 0 40px rgba(0,255,153,.5);
+}
+
+.bottom-content{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.5s;
+}
+.bottom-content.visible{opacity:1;pointer-events:auto}
+.dev-link{color:#ffffff !important;text-decoration:none;font-weight:600;transition:opacity .2s}
+.dev-link:hover{opacity:.8}
+.bottom-sections{display:flex;gap:30px;font-size:13px;color:#9ca3af;margin-bottom:10px}
+.bottom-gif{width:100%;max-height:90px;object-fit:contain}
+
+@media(max-width:700px){
+  .title{font-size:38px}
+  .topbar-pill{
+    width:95%;
+    padding:8px 15px;
+    flex-direction:column;
+    gap:10px;
+  }
+  .topbar-left{
+    flex-direction:column;
+    gap:10px;
+    width:100%;
+  }
+  .topbar-left nav{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .topbar-left nav a{margin-right:0;font-size:14px}
+  .brand{font-size:18px}
+  .center{padding:100px 15px 80px}
+  .bottom-sections{flex-direction:column;gap:10px;font-size:12px;text-align:center}
+  .bottom-gif{max-height:60px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+<div class="stars"></div>
+
+<div class="topbar">
+  <div class="topbar-pill">
+    <div class="topbar-left">
+      <span class="brand">H&C</span>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="based.html">Services</a>
+        <a href="community.html">Community</a>
+        <a href="discord.html">Backup</a>
+        <a class="active" href="showcase.html">Showcase</a>
+        <a href="searcher.html">Searcher</a>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <a href="https://dsc.gg/hacks-and-cheats" target="_blank">
+        <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e278299a53f5bf88615e90_Symbol.svg" style="width:22px;">
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="center">
+  <div class="title">Showcase</div>
+  <div class="lines"></div>
+  <div class="video-wrapper">
+    <video src="https://files.catbox.moe/xszihj.mp4" autoplay muted loop playsinline controls></video>
+  </div>
+</div>
+
+<iframe id="sc-player" width="1" height="1" style="opacity:0;position:absolute" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/ayhanbalaoghlanli/tiki_tiki-slowed-reverb&auto_play=true"></iframe>
+<script src="https://w.soundcloud.com/player/api.js"></script>
+
+<div class="bottom-content" id="bottom-content">
+  <div class="bottom-sections">
+    <a href="https://guns.lol/safwan120" target="_blank" class="dev-link">Developped by S₳₣₩₳₦₁₂₀</a>
+    <span>2026-H&C-2026</span>
+    <span>Made with ❤️</span>
+  </div>
+  <img class="bottom-gif" src="https://i.imgur.com/ZBm70Dt.gif">
+</div>
+
+<div class="cursor-dot"></div>
+<div class="cursor-glow"></div>
+
+<script>
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particlesArray = [];
+
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+window.addEventListener('resize',resizeCanvas);
+resizeCanvas();
+
+class ParticleBg{
+  constructor(){this.reset()}
+  reset(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height;
+    this.size=Math.random()*2+.5;
+    this.speedX=(Math.random()-.5)*.4;
+    this.speedY=(Math.random()-.5)*.4;
+    this.alpha=Math.random()*.5;
+  }
+  update(){
+    this.x+=this.speedX;this.y+=this.speedY;
+    if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height)this.reset();
+  }
+  draw(){
+    ctx.fillStyle=`rgba(99,102,241,${this.alpha})`;
+    ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();
+  }
+}
+
+for(let i=0;i<80;i++)particlesArray.push(new ParticleBg());
+function animateBg(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particlesArray.forEach(p=>{p.update();p.draw()});
+  requestAnimationFrame(animateBg);
+}
+animateBg();
+
+const dot=document.querySelector(".cursor-dot");
+const glow=document.querySelector(".cursor-glow");
+let mx=0,my=0,gx=0,gy=0;
+
+addEventListener("mousemove",e=>{
+  mx=e.clientX;my=e.clientY;
+  dot.style.left=mx+"px";dot.style.top=my+"px";
+  createParticle(mx,my);
+  const isClickable=e.target.closest('a,button,.btn,textarea,img,nav a');
+  document.body.classList.toggle('hovering',!!isClickable);
+});
+
+function createParticle(x,y){
+  const p=document.createElement("div");
+  p.className="cursor-particle";
+  const size=Math.random()*3+1;
+  p.style.width=size+"px";p.style.height=size+"px";
+  p.style.left=x+"px";p.style.top=y+"px";
+  document.body.appendChild(p);
+  const anim=p.animate([
+    {transform:'translate(-50%,-50%) scale(1)',opacity:.8},
+    {transform:`translate(${(Math.random()-.5)*30}px,${(Math.random()-.5)*30}px) scale(0)`,opacity:0}
+  ],{duration:800,easing:'ease-out'});
+  anim.onfinish=()=>p.remove();
+}
+
+(function loop(){
+  gx+=(mx-gx)*.08;gy+=(my-gy)*.08;
+  glow.style.left=gx+"px";glow.style.top=gy+"px";
+  requestAnimationFrame(loop);
+})();
+
+const bottom=document.getElementById("bottom-content");
+addEventListener("scroll",()=>{
+  const s=document.documentElement.scrollHeight-innerHeight;
+  if(s>0){scrollY>=s-10?bottom.classList.add("visible"):bottom.classList.remove("visible")}
+  else{bottom.classList.add("visible")}
+});
+// Show bottom if page doesn't scroll
+window.addEventListener('load',()=>{
+  const s=document.documentElement.scrollHeight-innerHeight;
+  if(s<=0)bottom.classList.add("visible");
+});
+
+/* Music sync */
+const widget=SC.Widget(document.getElementById("sc-player"));
+let musicState={isPlaying:false,position:0,lastUpdate:Date.now()};
+
+function loadMusicState(){
+  const saved=localStorage.getItem('musicState');
+  if(saved){
+    musicState=JSON.parse(saved);
+    if(musicState.isPlaying){
+      const elapsed=(Date.now()-musicState.lastUpdate)/1000;
+      musicState.position+=elapsed;
+    }
+  }
+}
+function saveMusicState(){
+  musicState.lastUpdate=Date.now();
+  localStorage.setItem('musicState',JSON.stringify(musicState));
+}
+
+loadMusicState();
+
+widget.bind(SC.Widget.Events.READY,function(){
+  if(musicState.isPlaying){
+    widget.seekTo(musicState.position*1000);
+    widget.play();
+  }
+  setInterval(()=>{
+    widget.getPosition(function(pos){
+      musicState.position=pos/1000;
+      widget.isPaused(function(paused){
+        musicState.isPlaying=!paused;
+        saveMusicState();
+      });
+    });
+  },1000);
+});
+
+document.addEventListener("click",()=>{
+  widget.isPaused(function(paused){
+    if(paused){widget.play();musicState.isPlaying=true;saveMusicState();}
+  });
+},{once:true});
+
+window.addEventListener('beforeunload',()=>{
+  widget.getPosition(function(pos){
+    musicState.position=pos/1000;
+    widget.isPaused(function(paused){
+      musicState.isPlaying=!paused;
+      saveMusicState();
+    });
+  });
+});
+</script>
+</body>
+</html>

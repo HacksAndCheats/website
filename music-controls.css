@@ -1,0 +1,125 @@
+.music-choice {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(2, 2, 10, 0.72);
+  backdrop-filter: blur(12px);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.music-choice.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.music-choice-box {
+  width: min(420px, 100%);
+  border: 1px solid rgba(99, 102, 241, 0.55);
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(8, 8, 24, 0.9);
+  box-shadow: 0 0 34px rgba(99, 102, 241, 0.34);
+}
+
+.music-choice-title {
+  margin: 0 0 8px;
+  font-family: Orbitron, sans-serif;
+  font-size: 22px;
+  color: #fff;
+}
+
+.music-choice-text {
+  margin: 0 0 20px;
+  color: #b7bdd1;
+  font-size: 14px;
+}
+
+.music-choice-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.music-choice-btn,
+.music-toggle {
+  border: 1px solid rgba(99, 102, 241, 0.7);
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(99, 102, 241, 0.36);
+  font: 700 13px Orbitron, sans-serif;
+  letter-spacing: 0;
+  cursor: none;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.music-choice-btn {
+  min-height: 46px;
+}
+
+.music-choice-btn:hover,
+.music-toggle:hover {
+  transform: translateY(-1px);
+  background: rgba(99, 102, 241, 0.58);
+  box-shadow: 0 0 18px rgba(99, 102, 241, 0.4);
+}
+
+.music-choice-btn.secondary,
+.music-toggle.is-muted {
+  border-color: rgba(148, 163, 184, 0.48);
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.music-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9000;
+  width: min(260px, calc(100vw - 32px));
+  padding: 12px;
+  border: 1px solid rgba(99, 102, 241, 0.5);
+  border-radius: 8px;
+  background: rgba(5, 5, 18, 0.82);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.32);
+}
+
+.music-panel-row {
+  display: grid;
+  grid-template-columns: 72px 1fr 38px;
+  align-items: center;
+  gap: 10px;
+}
+
+.music-toggle {
+  min-height: 34px;
+}
+
+.music-slider {
+  width: 100%;
+  accent-color: #6366f1;
+  cursor: none;
+}
+
+.music-volume-value {
+  color: #e5e7eb;
+  font: 700 12px Orbitron, sans-serif;
+  text-align: right;
+}
+
+@media (max-width: 520px) {
+  .music-choice-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .music-panel {
+    right: 10px;
+    bottom: 10px;
+  }
+}

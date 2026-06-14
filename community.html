@@ -587,6 +587,7 @@ object-fit:contain;
   }
 }
 </style>
+<link rel="stylesheet" href="music-controls.css">
 </head>
 <body>
 
@@ -598,7 +599,8 @@ object-fit:contain;
       <span class="brand">H&C</span>
       <nav>
         <a href="index.html">Home</a>
-        <a href="based.html">Services</a>
+        <a href="based.html">Free Services</a>
+        <a href="paid-services.html">Paid Services</a>
         <a class="active" href="community.html">Community</a>
         <a href="discord.html">Backup</a>
         <a href="searcher.html">Searcher</a>
@@ -666,9 +668,10 @@ object-fit:contain;
 
 </div>
 
-<iframe id="sc-player" width="1" height="1" style="opacity:0;position:absolute" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/ayhanbalaoghlanli/tiki_tiki-slowed-reverb&auto_play=true"> </iframe>
+<iframe id="sc-player" width="1" height="1" style="opacity:0;position:absolute" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/ayhanbalaoghlanli/tiki_tiki-slowed-reverb&auto_play=false"> </iframe>
 
 <script src="https://w.soundcloud.com/player/api.js"></script>
+<script src="music-controls.js"></script>
 
 <div class="bottom-content" id="bottom-content">
 <div class="bottom-sections">
@@ -864,76 +867,8 @@ addEventListener("scroll",()=>{
     }
 });
 
-const widget = SC.Widget(document.getElementById("sc-player"));
-
-// Système de synchronisation de la musique entre les pages
-let musicState = {
-  isPlaying: false,
-  position: 0,
-  lastUpdate: Date.now()
-};
-
-// Charger l'état de la musique depuis localStorage
-function loadMusicState() {
-  const saved = localStorage.getItem('musicState');
-  if (saved) {
-    musicState = JSON.parse(saved);
-    // Si la musique était en lecture, calculer la nouvelle position
-    if (musicState.isPlaying) {
-      const elapsed = (Date.now() - musicState.lastUpdate) / 1000;
-      musicState.position += elapsed;
-    }
-  }
-}
-
-// Sauvegarder l'état de la musique
-function saveMusicState() {
-  musicState.lastUpdate = Date.now();
-  localStorage.setItem('musicState', JSON.stringify(musicState));
-}
-
-// Initialiser la musique
-loadMusicState();
-
-widget.bind(SC.Widget.Events.READY, function() {
-  if (musicState.isPlaying) {
-    widget.seekTo(musicState.position * 1000);
-    widget.play();
-  }
-  
-  // Sauvegarder la position toutes les secondes
-  setInterval(() => {
-    widget.getPosition(function(pos) {
-      musicState.position = pos / 1000;
-      widget.isPaused(function(paused) {
-        musicState.isPlaying = !paused;
-        saveMusicState();
-      });
-    });
-  }, 1000);
-});
-
-// Démarrer la musique au premier clic
-document.addEventListener("click", () => {
-  widget.isPaused(function(paused) {
-    if (paused) {
-      widget.play();
-      musicState.isPlaying = true;
-      saveMusicState();
-    }
-  });
-}, {once: true});
-
-// Sauvegarder avant de quitter la page
-window.addEventListener('beforeunload', () => {
-  widget.getPosition(function(pos) {
-    musicState.position = pos / 1000;
-    widget.isPaused(function(paused) {
-      musicState.isPlaying = !paused;
-      saveMusicState();
-    });
-  });
-});
+/* Music controls */
+HCMusicControls.init({ promptOnEntry: false });
 </script>
 
 </body>

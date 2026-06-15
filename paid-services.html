@@ -209,6 +209,11 @@ background:linear-gradient(135deg,rgba(8,5,24,.96),rgba(20,8,38,.96));
 box-shadow:0 0 38px rgba(99,102,241,.22);
 }
 
+.product-panel.fansign-panel{
+grid-template-columns:minmax(500px,720px) minmax(280px,1fr);
+align-items: stretch;
+}
+
 .modal-close{
 position:absolute;
 top:14px;
@@ -230,6 +235,8 @@ border-radius:14px;
 padding:14px;
 background:rgba(0,0,0,.26);
 box-shadow:0 0 28px rgba(99,102,241,.18);
+display:flex;
+align-items:stretch;
 }
 
 .modal-media img,
@@ -239,6 +246,20 @@ height:460px;
 object-fit:cover;
 border-radius:10px;
 background:#02020a;
+}
+
+/* Fansigns — image remplit tout le cadre */
+.modal-media.auto-height {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+
+.modal-media.auto-height img {
+  height: 100%;
+  min-height: 400px;
+  object-fit: cover;
+  object-position: center;
 }
 
 .modal-title{
@@ -981,7 +1002,10 @@ const paidProducts = {
     title: "H&C Fansigns",
     subtitle: "Personalized H&C fansigns made on request.",
     media: '<img src="https://i.imgur.com/bWYxzo2.jpeg" alt="H&C Fansigns">',
-    plans: [{ name: "Custom fansign", price: "Open ticket" }]
+    plans: [
+      { name: "Real Girl Fansign", price: "Open ticket" },
+      { name: "Semi AI Fansign", price: "Open ticket" }
+    ]
   }
 };
 
@@ -1001,6 +1025,17 @@ function openProductPanel(productKey) {
   modalTitle.textContent = product.title;
   modalSubtitle.textContent = product.subtitle;
   plansGrid.innerHTML = "";
+
+  // Cadre image s'adapte à la taille naturelle pour les fansigns
+  const panel = document.querySelector(".product-panel");
+  const mediaDiv = document.getElementById("modal-media");
+  if (productKey === "fansigns") {
+    panel.classList.add("fansign-panel");
+    mediaDiv.classList.add("auto-height");
+  } else {
+    panel.classList.remove("fansign-panel");
+    mediaDiv.classList.remove("auto-height");
+  }
 
   product.plans.forEach((plan, index) => {
     const option = document.createElement("button");

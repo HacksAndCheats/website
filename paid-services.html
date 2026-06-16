@@ -843,14 +843,14 @@ body.hovering .cursor-dot {
         <span class="modal-tag">Undetected</span>
         <span class="modal-tag">Up to date</span>
       </div>
-      <div class="requirements-title">System requirements</div>
-      <div class="requirements-grid">
+      <div class="requirements-title" id="modal-req-title">System requirements</div>
+      <div class="requirements-grid" id="modal-req-grid">
         <div class="requirement">INTEL/AMD</div>
         <div class="requirement">Windows 10/11</div>
         <div class="requirement">DirectX 11/12</div>
         <div class="requirement">Multi fonctions</div>
       </div>
-      <div class="plans-title">Select your plan</div>
+      <div class="plans-title" id="modal-plans-title">Select your plan</div>
       <div class="plans-grid" id="plans-grid"></div>
       <a class="modal-buy" id="modal-buy" href="https://dsc.gg/hacks-and-cheats" target="_blank">Buy now</a>
     </div>
@@ -1016,6 +1016,9 @@ const modalSubtitle = document.getElementById("modal-subtitle");
 const plansGrid = document.getElementById("plans-grid");
 const modalBuy = document.getElementById("modal-buy");
 const modalClose = document.querySelector(".modal-close");
+const modalReqTitle = document.getElementById("modal-req-title");
+const modalReqGrid = document.getElementById("modal-req-grid");
+const modalPlansTitle = document.getElementById("modal-plans-title");
 
 function openProductPanel(productKey) {
   const product = paidProducts[productKey];
@@ -1032,22 +1035,45 @@ function openProductPanel(productKey) {
   if (productKey === "fansigns") {
     panel.classList.add("fansign-panel");
     mediaDiv.classList.add("auto-height");
+
+    // Zone "requirements" → affiche les plans (Real Girl / Semi AI)
+    modalReqTitle.textContent = "Plans";
+    modalReqGrid.innerHTML = `
+      <div class="requirement">Real Girl Fansign</div>
+      <div class="requirement">Semi AI Fansign</div>
+    `;
+
+    // Zone "select your plan" → affiche le placement
+    modalPlansTitle.textContent = "Placement";
+
+    // Plans = placement
+    [{ name: "Sur une feuille", price: "Open ticket" }, { name: "Sur les cuisses", price: "Open ticket" }].forEach((plan, index) => {
+      const option = document.createElement("button");
+      option.type = "button";
+      option.className = `plan-option${index === 0 ? " active" : ""}`;
+      option.innerHTML = `<span class="plan-name">${plan.name}</span><span class="plan-price">${plan.price}</span>`;
+      option.addEventListener("click", () => {
+        plansGrid.querySelectorAll(".plan-option").forEach(item => item.classList.remove("active"));
+        option.classList.add("active");
+      });
+      plansGrid.appendChild(option);
+    });
+
+    modalBuy.textContent = "Get now";
+
   } else {
     panel.classList.remove("fansign-panel");
     mediaDiv.classList.remove("auto-height");
-  }
 
-  product.plans.forEach((plan, index) => {
-    const option = document.createElement("button");
-    option.type = "button";
-    option.className = `plan-option${index === 0 ? " active" : ""}`;
-    option.innerHTML = `<span class="plan-name">${plan.name}</span><span class="plan-price">${plan.price}</span>`;
-    option.addEventListener("click", () => {
-      plansGrid.querySelectorAll(".plan-option").forEach(item => item.classList.remove("active"));
-      option.classList.add("active");
-      modalBuy.textContent = plan.price === "Open ticket" ? "Get now" : `Buy now - ${plan.price}`;
-    });
-    plansGrid.appendChild(option);
+    // Restaure les sections normales
+    modalReqTitle.textContent = "System requirements";
+    modalReqGrid.innerHTML = `
+      <div class="requirement">INTEL/AMD</div>
+      <div class="requirement">Windows 10/11</div>
+      <div class="requirement">DirectX 11/12</div>
+      <div class="requirement">Multi fonctions</div>
+    `;
+    modalPlansTitle.textContent = "Select your plan";
   });
 
   const firstPlan = product.plans[0];

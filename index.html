@@ -108,7 +108,144 @@ a, button, .btn, .reveal-bar, .reveal-handle, textarea, .topbar-right img, .topb
   100% { opacity: 0.3; transform: scale(0.95); }
 }
 
-/* MAIN CONTENT STYLES */
+/* ANNOUNCEMENT POPUP */
+#announcement-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(2, 2, 10, 0.85);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+#announcement-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.announce-panel {
+  position: relative;
+  max-width: 620px;
+  width: 100%;
+  border-radius: 20px;
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  background: linear-gradient(135deg, rgba(10, 4, 20, 0.98), rgba(30, 5, 5, 0.98));
+  box-shadow: 0 0 60px rgba(239, 68, 68, 0.25), 0 0 120px rgba(99, 102, 241, 0.1);
+  padding: 36px 32px 30px;
+  text-align: center;
+  animation: announceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes announceIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.announce-icon {
+  font-size: 52px;
+  margin-bottom: 10px;
+  display: block;
+  animation: shake 0.6s ease 0.5s both;
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(12deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(8deg); }
+}
+
+.announce-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: #ef4444;
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+  margin: 0 0 6px;
+  letter-spacing: 2px;
+}
+
+.announce-sub {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  color: #6366f1;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+
+.announce-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.5), transparent);
+  margin-bottom: 22px;
+}
+
+.announce-body {
+  font-size: 15px;
+  color: #d1d5db;
+  line-height: 1.75;
+  text-align: left;
+  margin-bottom: 26px;
+}
+
+.announce-body strong {
+  color: #f9a8d4;
+}
+
+.announce-body .highlight {
+  color: #f87171;
+  font-weight: 700;
+}
+
+.announce-body .green {
+  color: #34d399;
+  font-weight: 700;
+}
+
+.announce-footer {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  color: #4b5563;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.announce-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: 1px solid rgba(99, 102, 241, 0.6);
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.3), rgba(236, 72, 153, 0.2));
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: none !important;
+  transition: .2s;
+  letter-spacing: 1px;
+}
+
+.announce-close:hover {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.6), rgba(236, 72, 153, 0.4));
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+}
+
+@media(max-width:480px) {
+  .announce-panel { padding: 24px 18px 20px; }
+  .announce-title { font-size: 20px; }
+  .announce-body { font-size: 14px; }
+}
 img{display:block;max-width:100%}  
 .stars{  
   position:fixed;  
@@ -625,6 +762,33 @@ body.hovering .cursor-dot {
 
 <canvas id="particle-canvas"></canvas>
 
+<div id="announcement-overlay">
+  <div class="announce-panel">
+    <span class="announce-icon">⚠️</span>
+    <h2 class="announce-title">AVIS IMPORTANT</h2>
+    <div class="announce-sub">— H&C Community —</div>
+    <div class="announce-divider"></div>
+    <div class="announce-body">
+      <p>Les temps sont difficiles pour la communauté H&C.<br>
+      Notre <strong>serveur Discord principal a été fermé de force par Discord</strong> suite à des reports en masse.</p>
+
+      <p>On sait que beaucoup d'entre vous ont perdu accès à nos ressources, nos services et nos channels. <span class="highlight">On s'excuse pour la gêne occasionnée.</span></p>
+
+      <p>Mais H&C n'est <strong>pas mort</strong>. On rebuild. En attendant :</p>
+
+      <p>
+        🔗 <span class="green">Nouveau serveur de backup disponible</span> — rejoignez-le depuis la page <strong>Backup</strong> du site.<br>
+        📦 Tous nos services <strong>restent actifs</strong> et accessibles via ce site.<br>
+        💬 Pour toute commande ou question, <strong>ouvrez un ticket</strong> sur le nouveau serveur.
+      </p>
+
+      <p>Merci pour votre soutien. <strong>H&C continue.</strong></p>
+    </div>
+    <div class="announce-footer">— THE H&C TEAM · 2026 —</div>
+    <button class="announce-close" id="announce-close-btn">J'AI COMPRIS ✓</button>
+  </div>
+</div>
+
 <div id="splash-screen">
   <canvas id="rain-canvas"></canvas>
   <img src="https://i.imgur.com/S4unQ5F.jpeg" alt="Logo" class="splash-logo" id="splash-logo">
@@ -807,12 +971,21 @@ animateBg();
 /* Splash Screen & Music Logic */
 const splash = document.getElementById('splash-screen');
 const splashLogo = document.getElementById('splash-logo');
+const announcementOverlay = document.getElementById('announcement-overlay');
+const announceCloseBtn = document.getElementById('announce-close-btn');
 
 splash.addEventListener('click', () => {
   splash.classList.add('fade-out');
   setTimeout(() => { 
     splash.style.display = 'none';
+    // Affiche la popup d'annonce après le splash
+    announcementOverlay.classList.add('show');
   }, 800);
+});
+
+announceCloseBtn.addEventListener('click', () => {
+  announcementOverlay.classList.remove('show');
+  setTimeout(() => { announcementOverlay.style.display = 'none'; }, 500);
 });
 
 /* Custom Cursor & Effects */

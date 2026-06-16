@@ -1074,7 +1074,20 @@ function openProductPanel(productKey) {
       <div class="requirement">Multi fonctions</div>
     `;
     modalPlansTitle.textContent = "Select your plan";
-  });
+
+    product.plans.forEach((plan, index) => {
+      const option = document.createElement("button");
+      option.type = "button";
+      option.className = `plan-option${index === 0 ? " active" : ""}`;
+      option.innerHTML = `<span class="plan-name">${plan.name}</span><span class="plan-price">${plan.price}</span>`;
+      option.addEventListener("click", () => {
+        plansGrid.querySelectorAll(".plan-option").forEach(item => item.classList.remove("active"));
+        option.classList.add("active");
+        modalBuy.textContent = plan.price === "Open ticket" ? "Get now" : `Buy now - ${plan.price}`;
+      });
+      plansGrid.appendChild(option);
+    });
+  }
 
   const firstPlan = product.plans[0];
   modalBuy.textContent = firstPlan.price === "Open ticket" ? "Get now" : `Buy now - ${firstPlan.price}`;

@@ -55,7 +55,7 @@
   background: rgba(99, 102, 241, 0.36);
   font: 700 13px Orbitron, sans-serif;
   letter-spacing: 0;
-  cursor: none;
+  /* cursor: none; */
   transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -104,7 +104,7 @@
 .music-slider {
   width: 100%;
   accent-color: #6366f1;
-  cursor: none;
+  /* cursor: none; */
 }
 
 .music-volume-value {

@@ -27,7 +27,7 @@
     panel.innerHTML = `
       <div class="music-panel-row">
         <button class="music-toggle" type="button">Music</button>
-        <input class="music-slider" type="range" min="0" max="100" value="${state.volume}" aria-label="Volume musique">
+        <input class="music-slider" type="range" min="0" max="100" value="${state.volume}" aria-label="Music volume">
         <span class="music-volume-value">${state.volume}%</span>
       </div>
     `;
@@ -44,11 +44,11 @@
     choice.className = "music-choice";
     choice.innerHTML = `
       <div class="music-choice-box">
-        <h2 class="music-choice-title">Musique ?</h2>
-        <p class="music-choice-text">Choisis comment tu veux entrer sur le site.</p>
-        <div class="music-choice-actions">
-          <button class="music-choice-btn" type="button" data-music-choice="on">Avec musique</button>
-          <button class="music-choice-btn secondary" type="button" data-music-choice="off">Sans musique</button>
+        <h2 class="music-choice-title">Music ?</h2>
+        <p class="music-choice-text">Choose how you want to enter the site.</p>
+        <div class="music-choice-buttons">
+          <button class="music-choice-btn" type="button" data-music-choice="on">With music</button>
+          <button class="music-choice-btn secondary" type="button" data-music-choice="off">Without music</button>
         </div>
       </div>
     `;

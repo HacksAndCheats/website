@@ -134,6 +134,91 @@ width:100%;
 background:#02020a;
 }
 
+/* Card image carousel */
+.card-gallery{
+position:relative;
+border-radius:12px;
+overflow:hidden;
+height:140px;
+background:#02020a;
+}
+
+.card-gallery img,
+.card-gallery video{
+display:block;
+width:100%;
+height:140px;
+object-fit:cover;
+border-radius:12px;
+}
+
+.card-gallery-slide{
+width:100%;
+height:100%;
+}
+
+.card-gallery-slide[hidden]{
+display:none!important;
+}
+
+.card-gallery-arrow{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:28px;
+height:28px;
+border:1px solid rgba(99,102,241,.45);
+border-radius:999px;
+background:rgba(8,5,24,.82);
+color:#fff;
+font-size:18px;
+line-height:1;
+z-index:3;
+display:flex;
+align-items:center;
+justify-content:center;
+opacity:.75;
+transition:opacity .2s, box-shadow .2s;
+}
+
+.image-wrap:hover .card-gallery-arrow,
+.card-gallery-arrow:focus-visible{
+opacity:1;
+}
+
+.card-gallery-arrow:hover{
+border-color:#6366f1;
+box-shadow:0 0 12px rgba(99,102,241,.35);
+}
+
+.card-gallery-prev{left:6px}
+.card-gallery-next{right:6px}
+
+.card-gallery-dots{
+position:absolute;
+bottom:6px;
+left:50%;
+transform:translateX(-50%);
+display:flex;
+gap:5px;
+z-index:3;
+}
+
+.card-gallery-dot{
+width:6px;
+height:6px;
+border-radius:999px;
+border:none;
+padding:0;
+background:rgba(255,255,255,.35);
+transition:.2s;
+}
+
+.card-gallery-dot.active{
+background:#6366f1;
+box-shadow:0 0 8px rgba(99,102,241,.6);
+}
+
 .badge{
 position:absolute;
 top:6px;
@@ -197,7 +282,7 @@ backdrop-filter:blur(14px);
 .product-panel{
 position:relative;
 display:grid;
-grid-template-columns:minmax(360px,560px) minmax(280px,1fr);
+grid-template-columns:minmax(400px,1.5fr) minmax(280px,1fr);
 gap:30px;
 width:min(1220px,100%);
 max-height:88vh;
@@ -210,7 +295,7 @@ box-shadow:0 0 38px rgba(99,102,241,.22);
 }
 
 .product-panel.fansign-panel{
-grid-template-columns:minmax(500px,720px) minmax(280px,1fr);
+grid-template-columns:minmax(500px,1.8fr) minmax(280px,1fr);
 align-items: stretch;
 }
 
@@ -239,6 +324,11 @@ display:flex;
 align-items:stretch;
 }
 
+.modal-media.has-gallery{
+padding:12px;
+min-height:420px;
+}
+
 .modal-media img,
 .modal-media video{
 width:100%;
@@ -248,14 +338,228 @@ border-radius:10px;
 background:#02020a;
 }
 
-/* Fansigns — image remplit tout le cadre */
+/* Amazon-style media gallery */
+.media-gallery{
+display:flex;
+gap:12px;
+width:100%;
+min-height:400px;
+}
+
+.gallery-thumbs-col{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:8px;
+flex-shrink:0;
+}
+
+.gallery-thumbs-col.is-hidden{
+display:none;
+}
+
+.gallery-nav{
+width:36px;
+height:28px;
+border:1px solid rgba(99,102,241,.35);
+border-radius:6px;
+background:rgba(15,23,42,.72);
+color:#c4b5fd;
+font-size:11px;
+line-height:1;
+flex-shrink:0;
+}
+
+.gallery-nav:disabled{
+opacity:.35;
+pointer-events:none;
+}
+
+.gallery-thumbs{
+display:flex;
+flex-direction:column;
+gap:8px;
+max-height:360px;
+overflow-y:auto;
+scrollbar-width:thin;
+scrollbar-color:rgba(99,102,241,.55) transparent;
+padding-right:2px;
+}
+
+.gallery-thumb{
+width:56px;
+height:56px;
+padding:0;
+border:2px solid rgba(99,102,241,.28);
+border-radius:8px;
+overflow:hidden;
+background:#02020a;
+flex-shrink:0;
+transition:.2s;
+}
+
+.gallery-thumb.active{
+border-color:#6366f1;
+box-shadow:0 0 12px rgba(99,102,241,.35);
+}
+
+.gallery-thumb img{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:0;
+min-height:0;
+}
+
+.gallery-stage{
+flex:1;
+position:relative;
+min-width:0;
+display:flex;
+align-items:stretch;
+}
+
+.gallery-viewport{
+position:relative;
+flex:1;
+min-width:0;
+}
+
+.gallery-main{
+position:relative;
+width:100%;
+height:100%;
+min-height:400px;
+overflow:hidden;
+border-radius:10px;
+background:#02020a;
+cursor:crosshair;
+}
+
+.gallery-main-img{
+width:100%;
+height:100%;
+min-height:400px;
+object-fit:contain;
+border-radius:10px;
+background:#02020a;
+display:block;
+transition:transform .25s ease;
+}
+
+.gallery-lens{
+position:absolute;
+width:110px;
+height:110px;
+border:2px solid rgba(99,102,241,.85);
+background:rgba(99,102,241,.12);
+pointer-events:none;
+opacity:0;
+transition:opacity .15s;
+box-shadow:0 0 18px rgba(99,102,241,.28);
+}
+
+.gallery-viewport.is-zooming .gallery-lens{
+opacity:1;
+}
+
+.gallery-zoom-pane{
+position:absolute;
+top:0;
+right:0;
+width:46%;
+height:100%;
+border-left:1px solid rgba(99,102,241,.5);
+border-radius:0 10px 10px 0;
+background-color:#02020a;
+background-repeat:no-repeat;
+opacity:0;
+pointer-events:none;
+transition:opacity .15s;
+z-index:20;
+box-shadow:-8px 0 24px rgba(99,102,241,.18);
+}
+
+.gallery-viewport.is-zooming .gallery-zoom-pane{
+opacity:1;
+}
+
+.gallery-arrow{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:38px;
+height:38px;
+border:1px solid rgba(99,102,241,.45);
+border-radius:999px;
+background:rgba(8,5,24,.82);
+color:#fff;
+font-size:22px;
+line-height:1;
+z-index:5;
+display:flex;
+align-items:center;
+justify-content:center;
+transition:.2s;
+}
+
+.gallery-arrow:hover{
+border-color:#6366f1;
+box-shadow:0 0 14px rgba(99,102,241,.35);
+}
+
+.gallery-arrow-prev{left:10px}
+.gallery-arrow-next{right:10px}
+
+.gallery-arrow.is-hidden{
+display:none;
+}
+
+.gallery-counter{
+position:absolute;
+bottom:12px;
+right:12px;
+padding:6px 10px;
+border-radius:999px;
+background:rgba(8,5,24,.78);
+border:1px solid rgba(99,102,241,.35);
+color:#c4b5fd;
+font-size:12px;
+font-weight:700;
+letter-spacing:.4px;
+z-index:5;
+}
+
+.gallery-hint{
+position:absolute;
+bottom:12px;
+left:12px;
+padding:6px 10px;
+border-radius:999px;
+background:rgba(8,5,24,.78);
+border:1px solid rgba(99,102,241,.35);
+color:#8b96ad;
+font-size:11px;
+font-weight:700;
+z-index:5;
+pointer-events:none;
+}
+
+/* Fansigns — gallery fills the entire frame */
 .modal-media.auto-height {
   display: flex;
   align-items: stretch;
   height: 100%;
 }
 
-.modal-media.auto-height img {
+.modal-media.auto-height .media-gallery,
+.modal-media.auto-height .gallery-stage,
+.modal-media.auto-height .gallery-viewport,
+.modal-media.auto-height .gallery-main {
+  height: 100%;
+}
+
+.modal-media.auto-height .gallery-main-img {
   height: 100%;
   min-height: 400px;
   object-fit: cover;
@@ -318,6 +622,20 @@ font-weight:800;
 color:#e5e7eb;
 }
 
+.requirement.type-option{
+width:100%;
+cursor:none;
+transition:.2s;
+font-family:inherit;
+font-size:inherit;
+}
+
+.requirement.type-option.active,
+.requirement.type-option:hover{
+border-color:#6366f1;
+box-shadow:0 0 16px rgba(99,102,241,.28);
+}
+
 .plans-grid{
 display:grid;
 grid-template-columns:repeat(2,minmax(0,1fr));
@@ -373,6 +691,14 @@ font-weight:900;
 @media (max-width: 820px){
   .product-panel{grid-template-columns:1fr;padding:20px}
   .modal-media img,.modal-media video{height:260px}
+  .modal-media.has-gallery{min-height:auto}
+  .gallery-main,.gallery-main-img,.gallery-zoom-pane{min-height:260px}
+  .gallery-zoom-pane,.gallery-lens{display:none!important}
+  .gallery-viewport.is-zooming .gallery-lens{opacity:0}
+  .gallery-thumbs-col{flex-direction:row;width:100%}
+  .gallery-thumbs{flex-direction:row;max-height:none;overflow-x:auto;overflow-y:hidden;width:100%}
+  .gallery-nav-up,.gallery-nav-down{display:none}
+  .gallery-hint{display:none}
   .modal-title{font-size:28px}
   .requirements-grid,.plans-grid{grid-template-columns:1fr}
 }
@@ -801,28 +1127,28 @@ body.hovering .cursor-dot {
 <div class="products">
 
 <div class="glass">
-<div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/xWoAFaE.jpeg" alt="H&C VIP Access"></div>
+<div class="image-wrap" data-product="vip"><span class="badge"></span></div>
 <div class="product-title">H&C VIP ACCESS</div>
 <div class="product-desc">A private sharing zone with exclusive and surprising content reserved for VIP members.</div>
 <button class="access-btn" type="button" data-product="vip">Get now</button>
 </div>
 
 <div class="glass">
-<div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/hrjV9gJ.png" alt="H&C HWID Spoofer"></div>
+<div class="image-wrap" data-product="spoofer"><span class="badge"></span></div>
 <div class="product-title">H&C HWID Spoofer</div>
 <div class="product-desc">Premium HWID spoofing service for users who need a private, paid setup through H&C.</div>
 <button class="access-btn" type="button" data-product="spoofer">Get now</button>
 </div>
 
 <div class="glass">
-<div class="image-wrap"><span class="badge"></span><video src="https://cdn.discordapp.com/attachments/1506371748554342552/1515638453121847347/Enregistrement_de_lecran_2026-05-17_181635.mp4?ex=6a2fbbce&is=6a2e6a4e&hm=9a5d0a23c5b51db423c7612140c82819c026a1a7efde7d19ebec23ab116c6aea&" autoplay muted loop playsinline controls></video></div>
+<div class="image-wrap" data-product="ebooks"><span class="badge"></span></div>
 <div class="product-title">H&C eBooks Pack</div>
 <div class="product-desc">A paid pack of curated eBooks and digital resources available for H&C customers.</div>
 <button class="access-btn" type="button" data-product="ebooks">Get now</button>
 </div>
 
 <div class="glass">
-<div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/bWYxzo2.jpeg" alt="H&C Fansigns"></div>
+<div class="image-wrap" data-product="fansigns"><span class="badge"></span></div>
 <div class="product-title">H&C Fansigns</div>
 <div class="product-desc">Custom H&C fansigns made on request, available as a premium personalized service.</div>
 <button class="access-btn" type="button" data-product="fansigns">Get now</button>
@@ -839,7 +1165,7 @@ body.hovering .cursor-dot {
     <div class="modal-info">
       <h2 class="modal-title" id="modal-title"></h2>
       <div class="modal-subtitle" id="modal-subtitle"></div>
-      <div class="modal-tags">
+      <div class="modal-tags" id="modal-tags">
         <span class="modal-tag">Undetected</span>
         <span class="modal-tag">Up to date</span>
       </div>
@@ -939,7 +1265,7 @@ addEventListener("mousemove", e => {
     createParticle(mx, my);
 
     // Détection zone cliquable
-    const isClickable = e.target.closest('a, button, .btn, .access-btn, textarea, img, nav a');
+    const isClickable = e.target.closest('a, button, .btn, .access-btn, textarea, img, nav a, .gallery-thumb, .gallery-arrow, .gallery-nav, .card-gallery-arrow, .card-gallery-dot');
     if(isClickable) {
         document.body.classList.add('hovering');
     } else {
@@ -978,13 +1304,22 @@ const paidProducts = {
   vip: {
     title: "H&C VIP ACCESS",
     subtitle: "Private sharing zone with exclusive and surprising H&C content.",
-    media: '<img src="https://i.imgur.com/xWoAFaE.jpeg" alt="H&C VIP Access">',
-    plans: [{ name: "VIP access", price: "Open ticket" }]
+    images: [
+      { src: "https://i.imgur.com/xWoAFaE.jpeg", alt: "H&C VIP Access preview 1" },
+    ],
+    plans: [{ name: "VIP access", price: "5 USD" }]
   },
   spoofer: {
     title: "H&C HWID Spoofer",
     subtitle: "Premium HWID Spoofer with flexible access plans.",
-    media: '<img src="https://i.imgur.com/hrjV9gJ.png" alt="H&C HWID Spoofer">',
+    images: [
+      { src: "https://i.imgur.com/hrjV9gJ.png", alt: "H&C HWID Spoofer preview 1" },
+      { src: "https://i.imgur.com/vZzqnkj.png", alt: "H&C HWID Spoofer preview 2" },
+      { src: "https://i.imgur.com/nVUiO2d.png", alt: "H&C HWID Spoofer preview 3" },
+      { src: "https://i.imgur.com/NM2v91u.png", alt: "H&C HWID Spoofer preview 4" },
+      { src: "https://i.imgur.com/iBRsq4Y.png", alt: "H&C HWID Spoofer preview 5" },
+      { src: "https://i.imgur.com/vb84OTi.png", alt: "H&C HWID Spoofer preview 6" }
+    ],
     plans: [
       { name: "3 day", price: "2.50 USD" },
       { name: "1 month", price: "5 USD" },
@@ -995,18 +1330,45 @@ const paidProducts = {
   ebooks: {
     title: "H&C eBooks Pack",
     subtitle: "Curated eBooks and digital resources packed for H&C customers.",
-    media: '<video src="https://cdn.discordapp.com/attachments/1506371748554342552/1515638453121847347/Enregistrement_de_lecran_2026-05-17_181635.mp4?ex=6a2fbbce&is=6a2e6a4e&hm=9a5d0a23c5b51db423c7612140c82819c026a1a7efde7d19ebec23ab116c6aea&" autoplay muted loop playsinline controls></video>',
+    images: [
+      {
+        src: "https://cdn.discordapp.com/attachments/1506371748554342552/1515638453121847347/Enregistrement_de_lecran_2026-05-17_181635.mp4?ex=6a2fbbce&is=6a2e6a4e&hm=9a5d0a23c5b51db423c7612140c82819c026a1a7efde7d19ebec23ab116c6aea&",
+        alt: "H&C eBooks Pack preview video",
+        type: "video"
+      },
+      { src: "https://i.imgur.com/6ju8Cht.jpeg", alt: "H&C eBooks Pack preview 1" },
+      { src: "https://i.imgur.com/vTUgtHX.jpeg", alt: "H&C eBooks Pack preview 2" }
+    ],
     plans: [{ name: "eBooks pack", price: "Open ticket" }]
   },
   fansigns: {
     title: "H&C Fansigns",
     subtitle: "Personalized H&C fansigns made on request.",
-    media: '<img src="https://i.imgur.com/bWYxzo2.jpeg" alt="H&C Fansigns">',
-    plans: [
-      { name: "Real Girl Fansign", price: "Open ticket" },
-      { name: "Semi AI Fansign", price: "Open ticket" }
-    ]
+    images: [
+      { src: "https://i.imgur.com/bWYxzo2.jpeg", alt: "H&C Fansigns preview 1" },
+      { src: "https://i.imgur.com/fKIu7qa.jpeg", alt: "H&C Fansigns preview 2" },
+      { src: "https://i.imgur.com/9WrqoXB.jpeg", alt: "H&C Fansigns preview 3" }
+    ],
+    plans: []
   }
+};
+
+const fansignPlacements = {
+  realGirl: [
+    { name: "Thighs", price: "$10" },
+    { name: "Tummy", price: "$10" },
+    { name: "With bra / bikini", price: "$15" },
+    { name: "Ass w / panties", price: "$15" },
+    { name: "Nude tits (NSFW)", price: "$20" },
+    { name: "Nude ass", price: "$20" }
+  ],
+  semiAi: [
+    { name: "Sheet", price: "3 USD" },
+    { name: "Thighs", price: "4 USD" },
+    { name: "Breasts", price: "9 USD" },
+    { name: "NSFW", price: "13 USD" },
+    { name: "Custom", price: "13 USD" }
+  ]
 };
 
 const productModal = document.getElementById("product-modal");
@@ -1019,53 +1381,321 @@ const modalClose = document.querySelector(".modal-close");
 const modalReqTitle = document.getElementById("modal-req-title");
 const modalReqGrid = document.getElementById("modal-req-grid");
 const modalPlansTitle = document.getElementById("modal-plans-title");
+const modalTags = document.getElementById("modal-tags");
+let galleryCleanup = null;
+
+function createCardMediaElement(image, productTitle) {
+  if (image.type === "video") {
+    const video = document.createElement("video");
+    video.src = image.src;
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    return video;
+  }
+
+  const img = document.createElement("img");
+  img.src = image.src;
+  img.alt = image.alt || productTitle;
+  return img;
+}
+
+function initCardGallery(wrap, productKey) {
+  const product = paidProducts[productKey];
+  const images = product?.images;
+  if (!images?.length) return;
+
+  const gallery = document.createElement("div");
+  gallery.className = "card-gallery";
+
+  const slides = images.map((image, index) => {
+    const slide = document.createElement("div");
+    slide.className = "card-gallery-slide";
+    if (index !== 0) slide.hidden = true;
+    slide.appendChild(createCardMediaElement(image, product.title));
+    gallery.appendChild(slide);
+    return slide;
+  });
+
+  let currentIndex = 0;
+
+  function setSlide(index) {
+    currentIndex = (index + images.length) % images.length;
+    slides.forEach((slide, i) => {
+      slide.hidden = i !== currentIndex;
+    });
+    gallery.querySelectorAll(".card-gallery-dot").forEach((dot, i) => {
+      dot.classList.toggle("active", i === currentIndex);
+    });
+  }
+
+  if (images.length > 1) {
+    const prevBtn = document.createElement("button");
+    prevBtn.type = "button";
+    prevBtn.className = "card-gallery-arrow card-gallery-prev";
+    prevBtn.setAttribute("aria-label", "Previous image");
+    prevBtn.textContent = "‹";
+    prevBtn.addEventListener("click", event => {
+      event.stopPropagation();
+      setSlide(currentIndex - 1);
+    });
+
+    const nextBtn = document.createElement("button");
+    nextBtn.type = "button";
+    nextBtn.className = "card-gallery-arrow card-gallery-next";
+    nextBtn.setAttribute("aria-label", "Next image");
+    nextBtn.textContent = "›";
+    nextBtn.addEventListener("click", event => {
+      event.stopPropagation();
+      setSlide(currentIndex + 1);
+    });
+
+    const dots = document.createElement("div");
+    dots.className = "card-gallery-dots";
+    images.forEach((_, index) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = `card-gallery-dot${index === 0 ? " active" : ""}`;
+      dot.setAttribute("aria-label", `View image ${index + 1}`);
+      dot.addEventListener("click", event => {
+        event.stopPropagation();
+        setSlide(index);
+      });
+      dots.appendChild(dot);
+    });
+
+    gallery.appendChild(prevBtn);
+    gallery.appendChild(nextBtn);
+    gallery.appendChild(dots);
+  }
+
+  const badge = wrap.querySelector(".badge");
+  wrap.insertBefore(gallery, badge);
+}
+
+document.querySelectorAll(".image-wrap[data-product]").forEach(wrap => {
+  initCardGallery(wrap, wrap.dataset.product);
+});
+
+function initMediaGallery(container, images, productTitle) {
+  if (!images.length) return null;
+
+  let currentIndex = 0;
+  const zoomLevel = 2.4;
+  const controller = new AbortController();
+  const { signal } = controller;
+
+  container.innerHTML = `
+    <div class="media-gallery">
+      <div class="gallery-thumbs-col${images.length <= 1 ? " is-hidden" : ""}">
+        <button class="gallery-nav gallery-nav-up" type="button" aria-label="Scroll thumbnails up">▲</button>
+        <div class="gallery-thumbs"></div>
+        <button class="gallery-nav gallery-nav-down" type="button" aria-label="Scroll thumbnails down">▼</button>
+      </div>
+      <div class="gallery-stage">
+        <div class="gallery-viewport">
+          <div class="gallery-main">
+            <img class="gallery-main-img" src="${images[0].src}" alt="${images[0].alt || productTitle}">
+            <div class="gallery-lens" aria-hidden="true"></div>
+            <div class="gallery-zoom-pane" aria-hidden="true"></div>
+          </div>
+        </div>
+        <button class="gallery-arrow gallery-arrow-prev${images.length <= 1 ? " is-hidden" : ""}" type="button" aria-label="Previous image">‹</button>
+        <button class="gallery-arrow gallery-arrow-next${images.length <= 1 ? " is-hidden" : ""}" type="button" aria-label="Next image">›</button>
+        <div class="gallery-counter">${images.length <= 1 ? "" : `1 / ${images.length}`}</div>
+        <div class="gallery-hint">Hover to zoom</div>
+      </div>
+    </div>
+  `;
+
+  const thumbsCol = container.querySelector(".gallery-thumbs-col");
+  const thumbsWrap = container.querySelector(".gallery-thumbs");
+  const thumbUp = container.querySelector(".gallery-nav-up");
+  const thumbDown = container.querySelector(".gallery-nav-down");
+  const viewport = container.querySelector(".gallery-viewport");
+  const main = container.querySelector(".gallery-main");
+  const mainImg = container.querySelector(".gallery-main-img");
+  const lens = container.querySelector(".gallery-lens");
+  const zoomPane = container.querySelector(".gallery-zoom-pane");
+  const prevBtn = container.querySelector(".gallery-arrow-prev");
+  const nextBtn = container.querySelector(".gallery-arrow-next");
+  const counter = container.querySelector(".gallery-counter");
+  const canZoom = () => window.matchMedia("(min-width: 821px)").matches;
+
+  images.forEach((image, index) => {
+    const thumb = document.createElement("button");
+    thumb.type = "button";
+    thumb.className = `gallery-thumb${index === 0 ? " active" : ""}`;
+    thumb.setAttribute("aria-label", `View image ${index + 1}`);
+    thumb.innerHTML = `<img src="${image.src}" alt="">`;
+    thumb.addEventListener("click", () => setImage(index), { signal });
+    thumbsWrap.appendChild(thumb);
+  });
+
+  function setImage(index) {
+    currentIndex = (index + images.length) % images.length;
+    const image = images[currentIndex];
+    mainImg.src = image.src;
+    mainImg.alt = image.alt || productTitle;
+    zoomPane.style.backgroundImage = "";
+    viewport.classList.remove("is-zooming");
+
+    thumbsWrap.querySelectorAll(".gallery-thumb").forEach((thumb, i) => {
+      thumb.classList.toggle("active", i === currentIndex);
+    });
+
+    if (images.length > 1) {
+      counter.textContent = `${currentIndex + 1} / ${images.length}`;
+      const activeThumb = thumbsWrap.children[currentIndex];
+      if (activeThumb) {
+        activeThumb.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    }
+  }
+
+  function moveImage(step) {
+    setImage(currentIndex + step);
+  }
+
+  function updateZoom(event) {
+    if (!canZoom()) return;
+
+    const rect = main.getBoundingClientRect();
+    const lensW = lens.offsetWidth;
+    const lensH = lens.offsetHeight;
+    let x = event.clientX - rect.left;
+    let y = event.clientY - rect.top;
+
+    x = Math.max(lensW / 2, Math.min(x, rect.width - lensW / 2));
+    y = Math.max(lensH / 2, Math.min(y, rect.height - lensH / 2));
+
+    const left = x - lensW / 2;
+    const top = y - lensH / 2;
+    lens.style.left = `${left}px`;
+    lens.style.top = `${top}px`;
+
+    const ratioX = (left / Math.max(rect.width - lensW, 1)) * 100;
+    const ratioY = (top / Math.max(rect.height - lensH, 1)) * 100;
+
+    zoomPane.style.backgroundImage = `url("${mainImg.src}")`;
+    zoomPane.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
+    zoomPane.style.backgroundPosition = `${ratioX}% ${ratioY}%`;
+  }
+
+  prevBtn?.addEventListener("click", () => moveImage(-1), { signal });
+  nextBtn?.addEventListener("click", () => moveImage(1), { signal });
+  thumbUp?.addEventListener("click", () => { thumbsWrap.scrollTop -= 72; }, { signal });
+  thumbDown?.addEventListener("click", () => { thumbsWrap.scrollTop += 72; }, { signal });
+
+  main.addEventListener("mouseenter", () => {
+    if (canZoom()) viewport.classList.add("is-zooming");
+  }, { signal });
+
+  main.addEventListener("mouseleave", () => {
+    viewport.classList.remove("is-zooming");
+  }, { signal });
+
+  main.addEventListener("mousemove", updateZoom, { signal });
+
+  productModal.addEventListener("keydown", event => {
+    if (!productModal.classList.contains("open") || images.length <= 1) return;
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      moveImage(-1);
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      moveImage(1);
+    }
+  }, { signal });
+
+  return () => controller.abort();
+}
+
+function renderProductMedia(productKey, product) {
+  modalMedia.classList.remove("auto-height", "has-gallery");
+  modalMedia.innerHTML = "";
+
+  if (galleryCleanup) {
+    galleryCleanup();
+    galleryCleanup = null;
+  }
+
+  if (product.images?.length) {
+    modalMedia.classList.add("has-gallery");
+    if (productKey === "fansigns") modalMedia.classList.add("auto-height");
+    galleryCleanup = initMediaGallery(modalMedia, product.images, product.title);
+    return;
+  }
+
+  if (product.media) {
+    modalMedia.innerHTML = product.media;
+  }
+}
 
 function openProductPanel(productKey) {
   const product = paidProducts[productKey];
   if (!product) return;
 
-  modalMedia.innerHTML = product.media;
+  renderProductMedia(productKey, product);
   modalTitle.textContent = product.title;
   modalSubtitle.textContent = product.subtitle;
   plansGrid.innerHTML = "";
 
-  // Cadre image s'adapte à la taille naturelle pour les fansigns
+  const tags = productKey === "fansigns" ? ["UHQ+", "Hot"] : ["Undetected", "Up to date"];
+  modalTags.innerHTML = tags.map(tag => `<span class="modal-tag">${tag}</span>`).join("");
+
+  // Image frame adapts to natural size for fansigns
   const panel = document.querySelector(".product-panel");
-  const mediaDiv = document.getElementById("modal-media");
   if (productKey === "fansigns") {
     panel.classList.add("fansign-panel");
-    mediaDiv.classList.add("auto-height");
 
-    // Zone "requirements" → affiche les plans (Real Girl / Semi AI)
-    modalReqTitle.textContent = "Plans";
-    modalReqGrid.innerHTML = `
-      <div class="requirement">Real Girl Fansign</div>
-      <div class="requirement">Semi AI Fansign</div>
-    `;
+    function renderFansignPlacements(type) {
+      plansGrid.innerHTML = "";
+      const placements = fansignPlacements[type];
+      placements.forEach((plan, index) => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = `plan-option${index === 0 ? " active" : ""}`;
+        option.innerHTML = `<span class="plan-name">${plan.name}</span><span class="plan-price">${plan.price}</span>`;
+        option.addEventListener("click", () => {
+          plansGrid.querySelectorAll(".plan-option").forEach(item => item.classList.remove("active"));
+          option.classList.add("active");
+          modalBuy.textContent = `Buy now - ${plan.price}`;
+        });
+        plansGrid.appendChild(option);
+      });
+      if (placements.length) {
+        modalBuy.textContent = `Buy now - ${placements[0].price}`;
+      }
+    }
 
-    // Zone "select your plan" → affiche le placement
-    modalPlansTitle.textContent = "Placement";
-
-    // Plans = placement
-    [{ name: "Sur une feuille", price: "Open ticket" }, { name: "Sur les cuisses", price: "Open ticket" }].forEach((plan, index) => {
+    modalReqTitle.textContent = "Type";
+    modalReqGrid.innerHTML = "";
+    [
+      { key: "realGirl", label: "Real Girl" },
+      { key: "semiAi", label: "Semi AI" }
+    ].forEach(({ key, label }, index) => {
       const option = document.createElement("button");
       option.type = "button";
-      option.className = `plan-option${index === 0 ? " active" : ""}`;
-      option.innerHTML = `<span class="plan-name">${plan.name}</span><span class="plan-price">${plan.price}</span>`;
+      option.className = `requirement type-option${index === 0 ? " active" : ""}`;
+      option.textContent = label;
       option.addEventListener("click", () => {
-        plansGrid.querySelectorAll(".plan-option").forEach(item => item.classList.remove("active"));
+        modalReqGrid.querySelectorAll(".type-option").forEach(item => item.classList.remove("active"));
         option.classList.add("active");
+        renderFansignPlacements(key);
       });
-      plansGrid.appendChild(option);
+      modalReqGrid.appendChild(option);
     });
 
-    modalBuy.textContent = "Get now";
+    modalPlansTitle.textContent = "Placement";
+    renderFansignPlacements("realGirl");
 
   } else {
     panel.classList.remove("fansign-panel");
-    mediaDiv.classList.remove("auto-height");
 
-    // Restaure les sections normales
+    // Restore default sections
     modalReqTitle.textContent = "System requirements";
     modalReqGrid.innerHTML = `
       <div class="requirement">INTEL/AMD</div>
@@ -1089,8 +1719,10 @@ function openProductPanel(productKey) {
     });
   }
 
-  const firstPlan = product.plans[0];
-  modalBuy.textContent = firstPlan.price === "Open ticket" ? "Get now" : `Buy now - ${firstPlan.price}`;
+  if (productKey !== "fansigns") {
+    const firstPlan = product.plans[0];
+    modalBuy.textContent = firstPlan.price === "Open ticket" ? "Get now" : `Buy now - ${firstPlan.price}`;
+  }
   productModal.classList.add("open");
   productModal.setAttribute("aria-hidden", "false");
 }
@@ -1098,7 +1730,12 @@ function openProductPanel(productKey) {
 function closeProductPanel() {
   productModal.classList.remove("open");
   productModal.setAttribute("aria-hidden", "true");
+  if (galleryCleanup) {
+    galleryCleanup();
+    galleryCleanup = null;
+  }
   modalMedia.innerHTML = "";
+  modalMedia.classList.remove("auto-height", "has-gallery");
 }
 
 document.querySelectorAll("[data-product]").forEach(button => {

@@ -550,6 +550,101 @@ body.hovering .cursor-dot {
   margin-left:12px;
   cursor:pointer;
 }
+
+/* MODAL SYSTEM */
+.product-modal{
+position:fixed;
+inset:0;
+z-index:9500;
+display:none;
+align-items:center;
+justify-content:center;
+padding:24px;
+background:rgba(2,2,10,.78);
+backdrop-filter:blur(14px);
+}
+.product-modal.open{display:flex}
+.product-panel{
+position:relative;
+display:grid;
+gap:30px;
+width:min(600px,100%);
+max-height:88vh;
+border:1px solid rgba(99,102,241,.55);
+border-radius:16px;
+padding:26px;
+background:linear-gradient(135deg,rgba(8,5,24,.96),rgba(20,8,38,.96));
+box-shadow:0 0 38px rgba(99,102,241,.22);
+}
+.modal-close{
+position:absolute;
+top:14px;
+right:14px;
+width:36px;
+height:36px;
+border-radius:8px;
+border:1px solid rgba(148,163,184,.35);
+background:rgba(15,23,42,.72);
+color:#fff;
+font-size:22px;
+line-height:1;
+cursor:pointer;
+z-index:10;
+}
+.modal-title{margin:0;font-family:Orbitron;font-size:32px;line-height:1.15;color:#fff;}
+.modal-subtitle{margin:8px 0 18px;color:#7f8ca8;font-size:15px;}
+.modal-tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px;}
+.modal-tag{border:1px solid rgba(99,102,241,.55);border-radius:999px;padding:6px 12px;color:#c4b5fd;background:rgba(99,102,241,.12);font-weight:700;font-size:13px;}
+.plans-title{font-family:Orbitron;letter-spacing:2px;font-size:13px;color:#7f8ca8;margin:0 0 12px;text-transform:uppercase;}
+.plans-grid{display:grid;gap:10px;max-height:300px;overflow-y:auto;padding-right:5px;}
+.plans-grid::-webkit-scrollbar{width:6px;}
+.plans-grid::-webkit-scrollbar-track{background:rgba(0,0,0,.2);border-radius:10px;}
+.plans-grid::-webkit-scrollbar-thumb{background:rgba(99,102,241,.5);border-radius:10px;}
+.plan-option{border:1px solid rgba(99,102,241,.35);border-radius:10px;padding:12px 16px;background:rgba(6,10,22,.74);color:#fff;text-align:left;cursor:pointer;transition:.2s;}
+.plan-option.active,.plan-option:hover{border-color:#6366f1;box-shadow:0 0 16px rgba(99,102,241,.28);}
+.plan-name{display:block;color:#e5e7eb;font-size:15px;font-weight:600;}
+.modal-buy{display:flex;align-items:center;justify-content:center;margin-top:20px;min-height:50px;border-radius:10px;border:1px solid rgba(99,102,241,.65);background:linear-gradient(90deg,rgba(99,102,241,.38),rgba(236,72,153,.26));color:#fff;text-decoration:none;font-family:Orbitron;font-weight:900;transition:.2s;}
+.modal-buy:hover{opacity:0.9;box-shadow:0 0 15px rgba(99,102,241,.4);}
+
+/* DISCORD LOCK SYSTEM */
+.discord-lock-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(2,2,10,0.95);
+  backdrop-filter:blur(15px);
+  z-index:2000;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  transition:0.4s;
+}
+.discord-lock-overlay.hidden{
+  opacity:0;
+  pointer-events:none;
+}
+.discord-lock-box{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(88,101,242,0.4);
+  padding:40px;
+  border-radius:18px;
+  box-shadow:0 0 30px rgba(88,101,242,0.3);
+  max-width:400px;
+  width:90%;
+  position:relative;
+}
+.discord-lock-box h2{
+  font-family:Orbitron;
+  margin:0 0 10px;
+  color:#fff;
+  font-size:24px;
+}
+.discord-lock-box p{
+  color:#9ca3af;
+  font-size:14px;
+  margin-bottom:25px;
+}
 </style>
 <link rel="stylesheet" href="music-controls.css">
 </head>
@@ -580,6 +675,21 @@ body.hovering .cursor-dot {
 </div>
 
 <div class="stars"></div>
+
+<div class="discord-lock-overlay hidden" id="discord-lock">
+  <div class="discord-lock-box">
+    <button class="modal-close" id="close-discord-btn" type="button" aria-label="Close panel" style="position:absolute;top:15px;right:15px;">&times;</button>
+    <img src="https://i.imgur.com/S4unQ5F.jpeg" class="logo-orb" style="width:80px;height:80px;margin:0 auto 20px;">
+    <h2>Discord Authorization Required</h2>
+    <p>Please link your Discord account to access our free services.</p>
+    <button class="access-btn" id="discord-login-btn" style="font-size:16px;padding:12px 24px;background:#5865F2;border-color:#5865F2;width:100%;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <svg style="width:20px;height:20px;margin-right:8px;" viewBox="0 0 127.14 96.36" fill="currentColor">
+        <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.1,46,96,53,91,65.69,84.69,65.69Z"/>
+      </svg>
+      Login with Discord
+    </button>
+  </div>
+</div>
 
 <div class="center">
 
@@ -678,12 +788,109 @@ body.hovering .cursor-dot {
 <div class="glass">
 <div class="image-wrap"><img src="https://i.imgur.com/tT2FZYR.jpeg"></div>
 <div class="product-title">Free Movies/Anime Access</div>
-<div class="product-desc">Free Movies and Anime Access is a simple and convenient platform that gives you easy access to a wide selection of movies anytime, anywhere.</div>
-<a class="access-btn" href="https://dsc.gg/hacks-and-cheats" target="_blank">Get now</a>
+<div class="product-desc">Service 1 : Soap2Day, Service 2 : YesMovies, Service 3 : DailyFlix, etc. Gives you easy access to a wide selection of movies anytime, anywhere.</div>
+<button class="access-btn" type="button" data-modal="movies">Get now</button>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><img src="https://i.imgur.com/zdF4a4O.png" style="height:140px;object-fit:cover;object-position:center;"></div>
+<div class="product-title">Free VPS Servers</div>
+<div class="product-desc">Service 1 : VPSWala, Service 2 : GratisVPS, Service 3 : LetsCloud, etc. Get access to various free virtual private servers for your projects.</div>
+<button class="access-btn" type="button" data-modal="vps">Get now</button>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><img src="https://i.imgur.com/KI7GWMS.jpeg" style="height:140px;object-fit:cover;object-position:center;"></div>
+<div class="product-title">Free VPNs</div>
+<div class="product-desc">Service 1 : ProtonVPN, Service 2 : 1.1.1.1, Service 3 : Windscribe, etc. Protect your privacy and bypass restrictions with these free VPN services.</div>
+<button class="access-btn" type="button" data-modal="vpn">Get now</button>
+</div>
+
+<div class="glass">
+<div class="image-wrap"><img src="https://i.imgur.com/TiSGJYp.png" style="height:140px;object-fit:cover;object-position:center;"></div>
+<div class="product-title">Free Temp Numbers</div>
+<div class="product-desc">Service 1 : Temp-Number, Service 2 : Receive-SMS, Service 3 : VeePN, etc. Get access to temporary numbers to bypass SMS verifications and protect your real phone number.</div>
+<button class="access-btn" type="button" data-modal="sms">Get now</button>
 </div>
 
 </div>
 
+</div>
+
+<div class="product-modal" id="movies-modal" aria-hidden="true">
+  <div class="product-panel" role="dialog" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="Close panel">&times;</button>
+    <div class="modal-info">
+      <h2 class="modal-title">Free Movie Sites</h2>
+      <div class="modal-subtitle">Choose a streaming service</div>
+      <div class="modal-tags">
+        <span class="modal-tag">Free</span>
+        <span class="modal-tag">Working</span>
+      </div>
+      <div class="plans-title">Available Services</div>
+      <div class="plans-grid" id="movies-grid">
+        <!-- JS will populate this -->
+      </div>
+      <a class="modal-buy" id="movies-buy" href="#" target="_blank" style="pointer-events: none; opacity: 0.5;">Select a service</a>
+    </div>
+  </div>
+</div>
+
+<div class="product-modal" id="vps-modal" aria-hidden="true">
+  <div class="product-panel" role="dialog" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="Close panel">&times;</button>
+    <div class="modal-info">
+      <h2 class="modal-title">Free VPS Servers</h2>
+      <div class="modal-subtitle">Choose a VPS provider</div>
+      <div class="modal-tags">
+        <span class="modal-tag">Free Trial / Tier</span>
+        <span class="modal-tag">Working</span>
+      </div>
+      <div class="plans-title">Available Providers</div>
+      <div class="plans-grid" id="vps-grid">
+        <!-- JS will populate this -->
+      </div>
+      <a class="modal-buy" id="vps-buy" href="#" target="_blank" style="pointer-events: none; opacity: 0.5;">Select a provider</a>
+    </div>
+  </div>
+</div>
+
+<div class="product-modal" id="vpn-modal" aria-hidden="true">
+  <div class="product-panel" role="dialog" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="Close panel">&times;</button>
+    <div class="modal-info">
+      <h2 class="modal-title">Free VPNs</h2>
+      <div class="modal-subtitle">Choose a VPN provider</div>
+      <div class="modal-tags">
+        <span class="modal-tag">Free / Freemium</span>
+        <span class="modal-tag">Working</span>
+      </div>
+      <div class="plans-title">Available Providers</div>
+      <div class="plans-grid" id="vpn-grid">
+        <!-- JS will populate this -->
+      </div>
+      <a class="modal-buy" id="vpn-buy" href="#" target="_blank" style="pointer-events: none; opacity: 0.5;">Select a provider</a>
+    </div>
+  </div>
+</div>
+
+<div class="product-modal" id="sms-modal" aria-hidden="true">
+  <div class="product-panel" role="dialog" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="Close panel">&times;</button>
+    <div class="modal-info">
+      <h2 class="modal-title">Free Temp Numbers</h2>
+      <div class="modal-subtitle">Choose an SMS provider</div>
+      <div class="modal-tags">
+        <span class="modal-tag">Free</span>
+        <span class="modal-tag">Working</span>
+      </div>
+      <div class="plans-title">Available Providers</div>
+      <div class="plans-grid" id="sms-grid">
+        <!-- JS will populate this -->
+      </div>
+      <a class="modal-buy" id="sms-buy" href="#" target="_blank" style="pointer-events: none; opacity: 0.5;">Select a provider</a>
+    </div>
+  </div>
 </div>
 
 <iframe id="sc-player" width="1" height="1" style="opacity:0;position:absolute" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/ayhanbalaoghlanli/tiki_tiki-slowed-reverb&auto_play=false"> </iframe>
@@ -815,6 +1022,269 @@ addEventListener("scroll",()=>{
 
 /* Music controls */
 HCMusicControls.init({ promptOnEntry: false });
+
+/* Free Movies Modal */
+const movieServices = [
+  { name: "Soap2Day", url: "https://ww25.soap2day.day/" },
+  { name: "YesMovies", url: "https://ww2.yesmovies.ag/" },
+  { name: "DailyFlix", url: "https://main.dailyflix.info/" },
+  { name: "Flixtor", url: "https://flixtor.to/home" },
+  { name: "Flixtorz", url: "https://flixtorz.sx/" },
+  { name: "Dreamovies", url: "https://dreamovies.net/" },
+  { name: "Plex", url: "https://watch.plex.tv/" },
+  { name: "Movies2Watch Biz", url: "https://movies2watch.biz/" },
+  { name: "Movies2Watch Lol", url: "https://movies2watch.lol/" },
+  { name: "Movies2Watch Gs", url: "https://movies2watch.gs/" },
+  { name: "Cineby", url: "https://www.cineby.at/" },
+  { name: "Senpai Stream", url: "https://senpai-stream.wiki/" },
+  { name: "Kovran", url: "https://kovran.com/" }
+];
+
+const moviesModal = document.getElementById("movies-modal");
+const moviesGrid = document.getElementById("movies-grid");
+const moviesBuy = document.getElementById("movies-buy");
+const closeBtn = moviesModal.querySelector(".modal-close");
+
+movieServices.forEach((service) => {
+  const option = document.createElement("button");
+  option.type = "button";
+  option.className = "plan-option";
+  option.innerHTML = `<span class="plan-name">${service.name}</span>`;
+  option.addEventListener("click", () => {
+    moviesGrid.querySelectorAll(".plan-option").forEach(item => item.classList.remove("active"));
+    option.classList.add("active");
+    moviesBuy.href = service.url;
+    moviesBuy.textContent = "Watch on " + service.name;
+    moviesBuy.style.pointerEvents = "auto";
+    moviesBuy.style.opacity = "1";
+  });
+  moviesGrid.appendChild(option);
+});
+
+document.querySelectorAll('[data-modal="movies"]').forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (localStorage.getItem('discord_authorized') !== 'true') {
+      document.getElementById('discord-lock').classList.remove('hidden');
+      return;
+    }
+    moviesModal.classList.add("open");
+    moviesModal.setAttribute("aria-hidden", "false");
+  });
+});
+
+function closeMoviesModal() {
+  moviesModal.classList.remove("open");
+  moviesModal.setAttribute("aria-hidden", "true");
+}
+closeBtn.addEventListener("click", closeMoviesModal);
+moviesModal.addEventListener("click", e => {
+  if (e.target === moviesModal) closeMoviesModal();
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && moviesModal.classList.contains("open")) closeMoviesModal();
+});
+
+/* Free VPS Modal */
+const vpsServices = [
+  { name: "VPSWala", url: "https://vpswala.org/" },
+  { name: "GratisVPS", url: "https://gratisvps.net/" },
+  { name: "LetsCloud", url: "https://my.letscloud.io/sign-up/" },
+  { name: "Rackspace", url: "https://docs.rackspace.com/" },
+  { name: "Vultr", url: "https://www.vultr.com/" },
+  { name: "CloudSigma", url: "https://www.cloudsigma.com/" },
+  { name: "DigitalOcean", url: "https://www.digitalocean.com/" },
+  { name: "YellowCircle", url: "https://yellowcircle.net/" },
+  { name: "CTL", url: "https://www.ctl.io/" },
+  { name: "AppOnFly", url: "https://www.apponfly.com/" },
+  { name: "SkySilk", url: "https://www.skysilk.com/" }
+];
+
+const vpsModal = document.getElementById("vps-modal");
+const vpsGrid = document.getElementById("vps-grid");
+const vpsBuy = document.getElementById("vps-buy");
+const closeVpsBtn = vpsModal.querySelector(".modal-close");
+
+vpsServices.forEach((service) => {
+  const option = document.createElement("button");
+  option.type = "button";
+  option.className = "plan-option";
+  option.innerHTML = `<span class="plan-name">${service.name}</span>`;
+  option.addEventListener("click", () => {
+    vpsGrid.querySelectorAll(".plan-option").forEach(item => item.classList.remove("active"));
+    option.classList.add("active");
+    vpsBuy.href = service.url;
+    vpsBuy.textContent = "Go to " + service.name;
+    vpsBuy.style.pointerEvents = "auto";
+    vpsBuy.style.opacity = "1";
+  });
+  vpsGrid.appendChild(option);
+});
+
+document.querySelectorAll('[data-modal="vps"]').forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (localStorage.getItem('discord_authorized') !== 'true') {
+      document.getElementById('discord-lock').classList.remove('hidden');
+      return;
+    }
+    vpsModal.classList.add("open");
+    vpsModal.setAttribute("aria-hidden", "false");
+  });
+});
+
+function closeVpsModal() {
+  vpsModal.classList.remove("open");
+  vpsModal.setAttribute("aria-hidden", "true");
+}
+closeVpsBtn.addEventListener("click", closeVpsModal);
+vpsModal.addEventListener("click", e => {
+  if (e.target === vpsModal) closeVpsModal();
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && vpsModal.classList.contains("open")) closeVpsModal();
+});
+
+/* Free VPNs Modal */
+const vpnServices = [
+  { name: "ProtonVPN", url: "https://protonvpn.com/" },
+  { name: "1.1.1.1", url: "https://one.one.one.one/" },
+  { name: "Windscribe", url: "https://windscribe.com/" },
+  { name: "Psiphon", url: "https://psiphon.ca/" },
+  { name: "Riseup", url: "https://riseup.net/en/vpn" },
+  { name: "Outline", url: "https://getoutline.org/" },
+  { name: "Amnezia", url: "https://amnezia.org/" },
+  { name: "Hotspot Shield", url: "https://www.hotspotshield.com/" },
+  { name: "Calyx VPN", url: "https://calyxos.org/docs/guide/apps/calyx-vpn/" },
+  { name: "TunnelBear", url: "https://www.tunnelbear.com/" }
+];
+
+const vpnModal = document.getElementById("vpn-modal");
+const vpnGrid = document.getElementById("vpn-grid");
+const vpnBuy = document.getElementById("vpn-buy");
+const closeVpnBtn = vpnModal.querySelector(".modal-close");
+
+vpnServices.forEach((service) => {
+  const option = document.createElement("button");
+  option.type = "button";
+  option.className = "plan-option";
+  option.innerHTML = `<span class="plan-name">${service.name}</span>`;
+  option.addEventListener("click", () => {
+    vpnGrid.querySelectorAll(".plan-option").forEach(item => item.classList.remove("active"));
+    option.classList.add("active");
+    vpnBuy.href = service.url;
+    vpnBuy.textContent = "Go to " + service.name;
+    vpnBuy.style.pointerEvents = "auto";
+    vpnBuy.style.opacity = "1";
+  });
+  vpnGrid.appendChild(option);
+});
+
+document.querySelectorAll('[data-modal="vpn"]').forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (localStorage.getItem('discord_authorized') !== 'true') {
+      document.getElementById('discord-lock').classList.remove('hidden');
+      return;
+    }
+    vpnModal.classList.add("open");
+    vpnModal.setAttribute("aria-hidden", "false");
+  });
+});
+
+function closeVpnModal() {
+  vpnModal.classList.remove("open");
+  vpnModal.setAttribute("aria-hidden", "true");
+}
+closeVpnBtn.addEventListener("click", closeVpnModal);
+vpnModal.addEventListener("click", e => {
+  if (e.target === vpnModal) closeVpnModal();
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && vpnModal.classList.contains("open")) closeVpnModal();
+});
+
+/* Free Temp Numbers Modal */
+const smsServices = [
+  { name: "Temp-Number", url: "https://temp-number.com/" },
+  { name: "Receive-SMS", url: "https://receive-smss.com/" },
+  { name: "VeePN Online SMS", url: "https://veepn.com/online-sms/" },
+  { name: "eSIM Plus", url: "https://esimplus.me/temporary-numbers" },
+  { name: "Quackr", url: "https://quackr.io/" }
+];
+
+const smsModal = document.getElementById("sms-modal");
+const smsGrid = document.getElementById("sms-grid");
+const smsBuy = document.getElementById("sms-buy");
+const closeSmsBtn = smsModal.querySelector(".modal-close");
+
+smsServices.forEach((service) => {
+  const option = document.createElement("button");
+  option.type = "button";
+  option.className = "plan-option";
+  option.innerHTML = `<span class="plan-name">${service.name}</span>`;
+  option.addEventListener("click", () => {
+    smsGrid.querySelectorAll(".plan-option").forEach(item => item.classList.remove("active"));
+    option.classList.add("active");
+    smsBuy.href = service.url;
+    smsBuy.textContent = "Go to " + service.name;
+    smsBuy.style.pointerEvents = "auto";
+    smsBuy.style.opacity = "1";
+  });
+  smsGrid.appendChild(option);
+});
+
+document.querySelectorAll('[data-modal="sms"]').forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (localStorage.getItem('discord_authorized') !== 'true') {
+      document.getElementById('discord-lock').classList.remove('hidden');
+      return;
+    }
+    smsModal.classList.add("open");
+    smsModal.setAttribute("aria-hidden", "false");
+  });
+});
+
+function closeSmsModal() {
+  smsModal.classList.remove("open");
+  smsModal.setAttribute("aria-hidden", "true");
+}
+closeSmsBtn.addEventListener("click", closeSmsModal);
+smsModal.addEventListener("click", e => {
+  if (e.target === smsModal) closeSmsModal();
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && smsModal.classList.contains("open")) closeSmsModal();
+});
+
+/* Discord OAuth2 Logic with Backend */
+const BACKEND_URL = 'https://mon-discord-backend.onrender.com'; // L'URL de votre serveur Node.js sur Render
+
+const discordLock = document.getElementById('discord-lock');
+const discordLoginBtn = document.getElementById('discord-login-btn');
+
+if (discordLock && discordLoginBtn) {
+  const closeDiscordBtn = document.getElementById('close-discord-btn');
+  if (closeDiscordBtn) {
+    closeDiscordBtn.addEventListener('click', () => {
+      discordLock.classList.add('hidden');
+    });
+  }
+
+  // Check for authorized flag in URL (after backend redirect)
+  const fragment = new URLSearchParams(window.location.hash.slice(1));
+  const isAuthorized = fragment.get('authorized');
+
+  if (isAuthorized === 'true') {
+    // Save authorized state
+    localStorage.setItem('discord_authorized', 'true');
+    // Remove token from URL for clean look
+    window.history.replaceState(null, null, window.location.pathname);
+    discordLock.classList.add('hidden');
+  }
+
+  discordLoginBtn.addEventListener('click', () => {
+    // Redirect to backend login route
+    window.location.href = `${BACKEND_URL}/api/auth/discord/login`;
+  });
+}
 
 /* Discord Stats Widget */
 async function updateDiscordStats() {

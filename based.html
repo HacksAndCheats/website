@@ -152,6 +152,11 @@ font-size:18px;
 .product-desc{
 font-size:13px;
 color:#9ca3af;
+display: -webkit-box;
+-webkit-line-clamp: 3;
+-webkit-box-orient: vertical;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 
 /* BUTTON */
@@ -842,6 +847,73 @@ z-index:10;
 <a class="access-btn" href="https://cuty.io/dRvt" target="_blank">Get access</a>
 </div>
 
+<div class="glass" data-category="cheats">
+<div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/29yZxQn.jpeg"></div>
+<div class="product-title">Vigor Cheat</div>
+<div class="product-desc">
+🎮 <b>CONTROLS</b><br>
+INSERT - Toggle Menu<br>
+K - Apply Weapon Skin<br>
+Mouse - Aimbot Trigger<br><br>
+
+<b>📥 INSTALLATION</b><br>
+<b>⚠️ Prerequisites</b><br>
+1. Force DirectX 11<br>
+Vigor must be launched in DirectX 11 mode:<br>
+- Open Steam<br>
+- Right-click on Vigor → Properties<br>
+- In Launch Options, add: <code>-dx11</code><br>
+- Launch the game<br><br>
+
+<b>Step 0: First Game Launch (IMPORTANT)</b><br>
+Before modifying anything, you MUST launch the game once normally with EAC enabled.<br>
+- Start the game normally from Steam<br>
+- Wait until you reach the main menu<br>
+- Close the game completely<br>
+This ensures that all required game and EAC files are properly generated and initialized.<br><br>
+
+<b>Step 1: Disable EAC</b><br>
+Navigate to the EasyAntiCheat folder: <code>Steam\steamapps\common\Vigor\EasyAntiCheat</code><br>
+Edit the Settings.json file:<br>
+Modify the following values to bypass EAC:<br>
+- productid – Change to a random value<br>
+- sandboxid – Change to a random value<br>
+- deploymentid – Change to a random value<br><br>
+
+<b>Important Notes:</b><br>
+- Once this is done, EAC will remain bypassed until the next game update or Steam file verification.<br>
+- If the game updates or you verify / repair files via Steam, you must redo this process.<br>
+- Always use different random strings for each value.<br><br>
+
+<b>Step 2: Injection</b><br>
+1. Launch Vigor (DirectX 11 mode)<br>
+2. Wait until you're in the game lobby<br>
+3. Inject vigor.dll using your preferred injector: ✅ Recommended: Process Hacker 2; Xenos Injector; Extreme Injector<br>
+4. Press INSERT to open the menu<br>
+5. Enjoy!<br><br>
+
+<b>⚠️ Troubleshooting:</b><br>
+Game crashes on injection?<br>
+- Verify DirectX 11 is enabled<br>
+- Check EAC Settings.json is modified<br>
+- Inject in lobby, not main menu<br><br>
+
+Menu doesn't appear?<br>
+- Press INSERT to toggle<br>
+- Verify DLL was injected successfully<br><br>
+
+Features don't work?<br>
+- Some features only work in-match<br>
+- Fly/NoClip only work in pre-lobby<br><br>
+
+<b>Known Issues:</b><br>
+- Facepaints disabled (caused crashes)<br>
+- Some ESP items have distance limits<br>
+- Fly/NoClip only work in pre-lobby
+</div>
+<a class="access-btn" href="https://cuty.io/BI7LRvGk" target="_blank">Get access</a>
+</div>
+
 </div>
 
 
@@ -895,6 +967,22 @@ z-index:10;
 
 </div>
 
+</div>
+
+<div class="product-modal" id="info-modal" aria-hidden="true">
+  <div class="product-panel" role="dialog" aria-modal="true" style="max-width: 500px;">
+    <button class="modal-close" type="button" aria-label="Close panel">&times;</button>
+    <div class="modal-info" style="text-align: center;">
+      <img id="info-modal-img" src="" style="width: 120px; height: 120px; border-radius: 14px; object-fit: cover; margin: 0 auto 15px;">
+      <h2 class="modal-title" id="info-modal-title" style="font-size: 24px;">Title</h2>
+      <div class="modal-tags" style="justify-content: center; margin-top: 15px;">
+        <span class="modal-tag">Free</span>
+        <span class="modal-tag">Working</span>
+      </div>
+      <p id="info-modal-desc" style="color: #9ca3af; font-size: 14px; line-height: 1.6; text-align: left; margin: 20px 0; max-height: 200px; overflow-y: auto; padding-right: 5px;">Description</p>
+      <a class="modal-buy" id="info-modal-link" href="#" target="_blank">Download Now</a>
+    </div>
+  </div>
 </div>
 
 <div class="product-modal" id="movies-modal" aria-hidden="true">
@@ -1368,11 +1456,43 @@ if (discordLock && discordLoginBtn) {
   // Protect all direct download/access links
   document.querySelectorAll('a.access-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.preventDefault(); // Always stop direct navigation to show the info modal
       if (localStorage.getItem('discord_authorized') !== 'true') {
-        e.preventDefault(); // Stop navigation
         discordLock.classList.remove('hidden');
+      } else {
+        const glass = btn.closest('.glass');
+        const title = glass.querySelector('.product-title').textContent;
+        const desc = glass.querySelector('.product-desc').innerHTML;
+        const imgSrc = glass.querySelector('img').src;
+        const link = btn.href;
+        
+        document.getElementById('info-modal-title').textContent = title;
+        document.getElementById('info-modal-desc').innerHTML = desc;
+        document.getElementById('info-modal-img').src = imgSrc;
+        document.getElementById('info-modal-link').href = link;
+        
+        const modal = document.getElementById('info-modal');
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
       }
     });
+  });
+}
+
+/* Info Modal Close Logic */
+const infoModal = document.getElementById('info-modal');
+if(infoModal) {
+  const closeInfoBtn = infoModal.querySelector('.modal-close');
+  function closeInfoModal() {
+    infoModal.classList.remove('open');
+    infoModal.setAttribute('aria-hidden', 'true');
+  }
+  closeInfoBtn.addEventListener('click', closeInfoModal);
+  infoModal.addEventListener('click', e => {
+    if (e.target === infoModal) closeInfoModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && infoModal.classList.contains('open')) closeInfoModal();
   });
 }
 

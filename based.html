@@ -606,6 +606,63 @@ z-index:10;
 .modal-buy{display:flex;align-items:center;justify-content:center;margin-top:20px;min-height:50px;border-radius:10px;border:1px solid rgba(99,102,241,.65);background:linear-gradient(90deg,rgba(99,102,241,.38),rgba(236,72,153,.26));color:#fff;text-decoration:none;font-family:Orbitron;font-weight:900;transition:.2s;}
 .modal-buy:hover{opacity:0.9;box-shadow:0 0 15px rgba(99,102,241,.4);}
 
+/* SEARCH AND FILTER SYSTEM */
+.search-filter-container {
+  max-width: 800px;
+  margin: 0 auto 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 0 20px;
+}
+.search-bar {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(99,102,241,.4);
+  background: rgba(10,10,25,.6);
+  color: #fff;
+  font-family: 'Inter', Orbitron, sans-serif;
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s;
+}
+.search-bar:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 15px rgba(99,102,241,.3);
+}
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.filter-btn {
+  background: rgba(20,20,35,.7);
+  border: 1px solid rgba(100,100,150,.3);
+  color: #a0a0c0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: Orbitron;
+  font-size: 13px;
+  transition: 0.3s;
+}
+.filter-btn:hover {
+  border-color: rgba(99,102,241,.6);
+  color: #fff;
+}
+.filter-btn.active {
+  background: rgba(99,102,241,.2);
+  border-color: #6366f1;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(99,102,241,.4);
+}
+.glass.hidden { display: none !important; }
+.section-label.hidden { display: none !important; }
+.lines.hidden { display: none !important; }
+
 /* DISCORD LOCK SYSTEM */
 .discord-lock-overlay{
   position:fixed;
@@ -697,116 +754,118 @@ z-index:10;
 <img src="https://i.imgur.com/S4unQ5F.jpeg">
 </div>
 
-<div class="lines"></div>
+<div class="lines" id="line-cheats"></div>
 
 <div class="title">H&C Free Services</div>
 
-<div class="section-label">Our cheats</div>
+<div class="search-filter-container">
+  <input type="text" id="product-search" placeholder="Search products..." class="search-bar">
+  <div class="filter-buttons">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="cheats">Cheats</button>
+    <button class="filter-btn" data-filter="spoofers">Spoofers/AC Bypass</button>
+    <button class="filter-btn" data-filter="extras">Extras</button>
+  </div>
+</div>
 
-<div class="products">
+<div class="section-label" id="label-cheats">Our cheats</div>
 
-<div class="glass">
+<div class="products" id="grid-cheats">
+
+<div class="glass" data-category="cheats">
 <div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/8mjtgyC.png"></div>
 <div class="product-title">Fortnite Cheat</div>
 <div class="product-desc">Free Fortnite cheat featuring Box/Corner/Filled Box ESP, Health & Shield Bars, Weapon & Loot ESP, Team Check, Aimbot with custom FOV circle, Silent Aim, configurable hotkeys, spinbot, magic bullets, others exploits, and more…</div>
 <a class="access-btn" href="https://bstlar.com/3-V/kainite-free" target="_blank">Get access</a>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="cheats">
 <div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/WD0OpUB.jpeg"></div>
 <div class="product-title">Counter-Strike 2 Cheat/Inventory Changer</div>
 <div class="product-desc">Free CS2 cheat featuring Box/Corner/Filled Box ESP, Skeleton ESP, Health & Armor Bars, Weapon ESP, Team Check and Visibility Check, Aimbot with custom FOV circle, Silent Aim, Triggerbot, customizable smoothness, Recoil Control System (RCS), Bunny Hop, Radar Hack, Spectator List, configurable hotkeys, Skins Changer, and much more…</div>
 <a class="access-btn" href="https://vanix.fr/static/vds/PassatHook%20Counter-Strike%202.zip" target="_blank">Get access</a>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="cheats">
 <div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/fP0tkVM.jpeg"></div>
 <div class="product-title">Cryzen.io Cheat</div>
 <div class="product-desc">Free Cryzen.io cheat featuring Box/Corner/Filled Box ESP, Weapon ESP, Aimbot with custom FOV circle, customizable smoothness, Recoil Control System (RCS), Bunny Hop, configurable hotkeys, Player teleport up, Rapid Fire, a lot of exploits and much more…</div>
 <a class="access-btn" href="https://dsc.gg/hacks-and-cheats" target="_blank">Get access</a>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="spoofers">
 <div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/XxS2nRZ.png"></div>
 <div class="product-title">Temporary HWID Spoofer</div>
 <div class="product-desc">Free Temporary HWID Spoofer with clean ImGUI, Temporary identity obfuscation solution, MAC Adress Changer, TPM Bypass,HWID Checker, Ban Traces Cleaner for Fortnite, VALORANT, COD and others games </div>
 <a class="access-btn" href="https://dsc.gg/hacks-and-cheats" target="_blank">Get access</a>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="cheats">
 <div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/TjyoasE.jpeg"></div>
 <div class="product-title">VALORANT Cheat/Inventory Changer</div>
 <div class="product-desc">Aimbot with Custom aim key, Vischeck, fov check, smoothing, recoil control, recoil crosshair, Visuals with Box ESP(2D/3D/Corner,]Healthbar, Shieldbar, Head circle, Agent icon, Gun & utils icon, Skeleton ESP, Spike info & ESP, Dropped gun ESP, Hitbox ESP, Sage wall ESP, Distance ESP, Hand/Gun Chams, Fresnel glow, Misc with Local player glow, Big tonka, Bigg me (player), Fast crouch, Fovchanger, Hand/Gun material, Thirdperson, BHop, Wireframe Hands/Gun, Spinbot (customizeable speed), Disconnect (skip tutorial), Unlock all [skins, titles, level borders, sprays, cards], Buddy changer, Skin finishers (only last kill / every kill)</div>
 <a class="access-btn" href="https://cuty.io/fzTfq1" target="_blank">Get access</a>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="cheats">
 <div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/LHKHEld.jpeg"></div>
 <div class="product-title">R.E.P.O. Cheat</div>
 <div class="product-desc">God Mode / Infinite Health, Infinite Stamina, NoClip, Customizable Stats, No Weapon Recoil/Cooldown, Grab Through Walls, RGB Player, No Fog, Custom FOV, Modern UI, Enemy ESP, Item ESP, Player ESP, Extraction ESP, Chams, Map Info, Player Interaction, Teleportation, Social, Enemy Control, Teleport Enemies, Mob Spawner, Item Spawner, Item Teleport, Remote Sell, Server Browser, Hotkey Manager, Config System, Trolling Features, Lobby Crasher, Fake Player Spawner, NPC Spam</div>
 <a class="access-btn" href="https://cdn.discordapp.com/attachments/1446178829977653248/1446178830959116380/REPXInjector.rar?ex=6a07f4be&is=6a06a33e&hm=6a80c6101dafb7836d19f969fcae3f1044203a884338e4ce3a4c908501757166&" target="_blank">Get access</a>
 </div>
 
+<div class="glass" data-category="cheats">
+<div class="image-wrap"><span class="badge"></span><img src="https://i.imgur.com/hnr3Yhx.jpeg"></div>
+<div class="product-title">My Hero Ultra Rumble Cheat</div>
+<div class="product-desc">Free My Hero Ultra Rumble cheat featuring Aimbot, ESP, Wallhack, and more exploits to dominate the battlefield.</div>
+<a class="access-btn" href="https://cuty.io/uuAEpdcS" target="_blank">Get access</a>
 </div>
 
-<div class="lines"></div>
-
-<div class="section-label">Our premium accounts leaks</div>
-
-<div class="products">
-<div class="glass" style="width:100%;max-width:700px;flex-direction:row;gap:28px;align-items:center;padding:28px 32px">
-  <div class="image-wrap" style="flex-shrink:0">
-    <img src="https://i.imgur.com/ulbNNmC.png" style="height:180px;width:180px;object-fit:cover;border-radius:14px">
-  </div>
-  <div style="display:flex;flex-direction:column;gap:12px;text-align:left">
-    <div class="product-title" style="font-size:24px">Mega Accounts Pack</div>
-    <div class="product-desc" style="font-size:14px;line-height:1.7">Get access to our biggest drop yet — hundreds of leaked premium accounts including Steam, Netflix, Spotify, Disney+, PayPal and more. Updated weekly, verified and ready to use. Exclusive to H&C members.</div>
-    <a class="access-btn" href="https://dsc.gg/hacks-and-cheats" target="_blank" style="align-self:flex-start">Get now</a>
-  </div>
 </div>
-</div>
-<div class="lines"></div>
 
-<div class="section-label">Our EXTRAS</div>
 
-<div class="products">
+<div class="lines" id="line-extras"></div>
 
-<div class="glass">
+<div class="section-label" id="label-extras">Our EXTRAS</div>
+
+<div class="products" id="grid-extras">
+
+<div class="glass" data-category="extras">
 <div class="image-wrap"><img src="https://i.imgur.com/6ju8Cht.jpeg"></div>
 <div class="product-title">Free CANAL+ and beIN SPORTS access</div>
 <div class="product-desc">Free CANAL+ and beIN SPORTS access: enjoy free access to top movies, series, and live sports events, with no commitment.</div>
 <a class="access-btn" href="https://dsc.gg/hacks-and-cheats" target="_blank">Get now</a>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="extras">
 <div class="image-wrap"><img src="https://i.imgur.com/vTUgtHX.jpeg"></div>
 <div class="product-title">Free Access to All TV Channels</div>
 <div class="product-desc">Gives you unlimited access to all your favorite TV channels for free, anytime and anywhere.</div>
 <a class="access-btn" href="https://dsc.gg/hacks-and-cheats" target="_blank">Get now</a>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="extras">
 <div class="image-wrap"><img src="https://i.imgur.com/tT2FZYR.jpeg"></div>
 <div class="product-title">Free Movies/Anime Access</div>
 <div class="product-desc">Service 1 : Soap2Day, Service 2 : YesMovies, Service 3 : DailyFlix, etc. Gives you easy access to a wide selection of movies anytime, anywhere.</div>
 <button class="access-btn" type="button" data-modal="movies">Get now</button>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="extras">
 <div class="image-wrap"><img src="https://i.imgur.com/zdF4a4O.png" style="height:140px;object-fit:cover;object-position:center;"></div>
 <div class="product-title">Free VPS Servers</div>
 <div class="product-desc">Service 1 : VPSWala, Service 2 : GratisVPS, Service 3 : LetsCloud, etc. Get access to various free virtual private servers for your projects.</div>
 <button class="access-btn" type="button" data-modal="vps">Get now</button>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="extras">
 <div class="image-wrap"><img src="https://i.imgur.com/KI7GWMS.jpeg" style="height:140px;object-fit:cover;object-position:center;"></div>
 <div class="product-title">Free VPNs</div>
 <div class="product-desc">Service 1 : ProtonVPN, Service 2 : 1.1.1.1, Service 3 : Windscribe, etc. Protect your privacy and bypass restrictions with these free VPN services.</div>
 <button class="access-btn" type="button" data-modal="vpn">Get now</button>
 </div>
 
-<div class="glass">
+<div class="glass" data-category="extras">
 <div class="image-wrap"><img src="https://i.imgur.com/TiSGJYp.png" style="height:140px;object-fit:cover;object-position:center;"></div>
 <div class="product-title">Free Temp Numbers</div>
 <div class="product-desc">Service 1 : Temp-Number, Service 2 : Receive-SMS, Service 3 : VeePN, etc. Get access to temporary numbers to bypass SMS verifications and protect your real phone number.</div>
@@ -1284,7 +1343,74 @@ if (discordLock && discordLoginBtn) {
     // Redirect to backend login route
     window.location.href = `${BACKEND_URL}/api/auth/discord/login`;
   });
+
+  // Protect all direct download/access links
+  document.querySelectorAll('a.access-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      if (localStorage.getItem('discord_authorized') !== 'true') {
+        e.preventDefault(); // Stop navigation
+        discordLock.classList.remove('hidden');
+      }
+    });
+  });
 }
+
+/* Search and Filter System */
+const searchInput = document.getElementById('product-search');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const products = document.querySelectorAll('.glass');
+const grids = document.querySelectorAll('.products');
+
+function updateProducts() {
+  const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+  const activeBtn = document.querySelector('.filter-btn.active');
+  const activeFilter = activeBtn ? activeBtn.dataset.filter : 'all';
+
+  products.forEach(product => {
+    const title = product.querySelector('.product-title').textContent.toLowerCase();
+    const desc = product.querySelector('.product-desc').textContent.toLowerCase();
+    const category = product.dataset.category;
+    
+    const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
+    const matchesFilter = activeFilter === 'all' || activeFilter === category;
+    
+    if (matchesSearch && matchesFilter) {
+      product.classList.remove('hidden');
+    } else {
+      product.classList.add('hidden');
+    }
+  });
+
+  // Hide empty sections
+  grids.forEach(grid => {
+    const id = grid.id.replace('grid-', '');
+    const line = document.getElementById(`line-${id}`);
+    const label = document.getElementById(`label-${id}`);
+    
+    // Check if at least one child is not hidden
+    const hasVisibleChildren = Array.from(grid.children).some(child => !child.classList.contains('hidden'));
+    
+    if (hasVisibleChildren) {
+      grid.classList.remove('hidden');
+      if (line) line.classList.remove('hidden');
+      if (label) label.classList.remove('hidden');
+    } else {
+      grid.classList.add('hidden');
+      if (line) line.classList.add('hidden');
+      if (label) label.classList.add('hidden');
+    }
+  });
+}
+
+if (searchInput) searchInput.addEventListener('input', updateProducts);
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateProducts();
+  });
+});
 
 /* Discord Stats Widget */
 async function updateDiscordStats() {

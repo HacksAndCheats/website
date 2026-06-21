@@ -21,21 +21,29 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
+  /* Music note SVG icon */
+  const MUSIC_ICON_SVG = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/>
+  </svg>`;
+
   function buildPanel(state) {
     const panel = document.createElement("div");
     panel.className = "music-panel";
     panel.innerHTML = `
-      <div class="music-panel-row">
-        <button class="music-toggle" type="button">Music</button>
+      <div class="music-panel-expand">
+        <button class="music-toggle" type="button">${state.isPlaying ? "Pause" : "Play"}</button>
         <input class="music-slider" type="range" min="0" max="100" value="${state.volume}" aria-label="Music volume">
         <span class="music-volume-value">${state.volume}%</span>
+      </div>
+      <div class="music-icon-tab" role="button" aria-label="Music controls" tabindex="0">
+        ${MUSIC_ICON_SVG}
       </div>
     `;
     document.body.appendChild(panel);
     return {
       toggle: panel.querySelector(".music-toggle"),
       slider: panel.querySelector(".music-slider"),
-      value: panel.querySelector(".music-volume-value")
+      value:  panel.querySelector(".music-volume-value")
     };
   }
 
@@ -46,7 +54,7 @@
       <div class="music-choice-box">
         <h2 class="music-choice-title">Music ?</h2>
         <p class="music-choice-text">Choose how you want to enter the site.</p>
-        <div class="music-choice-buttons">
+        <div class="music-choice-actions">
           <button class="music-choice-btn" type="button" data-music-choice="on">With music</button>
           <button class="music-choice-btn secondary" type="button" data-music-choice="off">Without music</button>
         </div>

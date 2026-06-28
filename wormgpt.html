@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WormGPT — H&C</title>
+<link rel="icon" type="image/jpeg" href="https://i.imgur.com/S4unQ5F.jpeg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="music-controls.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Inter, sans-serif;
+    background: radial-gradient(circle at bottom, #5b21b6 0%, #0b0620 35%, #02020a 70%);
+    background-attachment: fixed;
+    color: #e5e7eb;
+    min-height: 100vh;
+    overflow: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    position: fixed;
+    top: 18px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 3000;
+  }
+  .topbar-pill {
+    width: 92%;
+    max-width: 1200px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 0 30px rgba(99,102,241,.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand {
+    font-family: Orbitron, sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: #ffffff;
+  }
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+  .topbar-left nav { display: flex; align-items: center; }
+  .topbar-left nav a {
+    color: #e5e7eb;
+    text-decoration: none;
+    margin-right: 15px;
+    font-weight: 500;
+    transition: .2s;
+  }
+  .topbar-left nav a.active { color: #6366f1; }
+  .topbar-left nav a:hover { color: #a5b4fc; }
+  .topbar-right { display: flex; align-items: center; }
+
+  /* ── WormGPT Badge ── */
+  .wormgpt-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px 3px 6px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 999px;
+    font-family: Orbitron, sans-serif;
+    font-size: 10px;
+    color: #f87171;
+    letter-spacing: 1px;
+    animation: badgePulse 2s infinite;
+  }
+  .wormgpt-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 6px #ef4444;
+    animation: dotPulse 1.5s infinite;
+  }
+  @keyframes badgePulse {
+    0%, 100% { box-shadow: 0 0 6px rgba(239,68,68,.2); }
+    50%       { box-shadow: 0 0 14px rgba(239,68,68,.5); }
+  }
+  @keyframes dotPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+  }
+
+  /* ── Iframe container ── */
+  .wormgpt-wrapper {
+    position: fixed;
+    top: 70px;   /* below topbar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #wormgpt-frame {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: #02020a;
+  }
+
+  /* ── Cursor ── */
+  .cursor-dot {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: width .2s, height .2s, background .2s, box-shadow .2s;
+  }
+  .cursor-glow {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, white, transparent 60%);
+    border-radius: 50%;
+    filter: blur(6px);
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+  }
+  body.hovering .cursor-dot {
+    width: 20px;
+    height: 20px;
+    background: #a855f7;
+    box-shadow: 0 0 20px #a855f7, 0 0 40px rgba(168,85,247,.5);
+  }
+
+  /* ── Download cards ── */
+  .download-section {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    padding: 8px 10px;
+    background: linear-gradient(transparent, rgba(2,2,10,.92) 30%);
+    pointer-events: none;
+  }
+  .download-section > * { pointer-events: auto; }
+  .download-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(99,102,241,.5);
+    background: rgba(8,5,22,.92);
+    backdrop-filter: blur(10px);
+    color: #e5e7eb;
+    text-decoration: none;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    transition: .2s;
+  }
+  .download-btn:hover {
+    background: rgba(99,102,241,.25);
+    border-color: #6366f1;
+    box-shadow: 0 0 15px rgba(99,102,241,.3);
+  }
+  .download-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* ── Hamburger ── */
+  .hamburger{
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    width:36px;
+    height:36px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(99,102,241,.3);
+    border-radius:10px;
+    cursor:pointer;
+    padding:6px;
+    transition:.2s;
+    z-index:5001;
+  }
+  .hamburger span{
+    display:block;
+    width:20px;
+    height:2px;
+    background:#e5e7eb;
+    border-radius:2px;
+    transition:.3s;
+    margin:2px 0;
+  }
+  .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
+  .hamburger.active span:nth-child(2){opacity:0}
+  .hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
+  .mobile-nav-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(2,2,10,.92);
+    backdrop-filter:blur(20px);
+    z-index:5000;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+    opacity:0;
+    visibility:hidden;
+    transition:.35s;
+  }
+  .mobile-nav-overlay.open{opacity:1;visibility:visible}
+  .mobile-nav-overlay a{
+    color:#e5e7eb;
+    text-decoration:none;
+    font-family:Orbitron,sans-serif;
+    font-size:22px;
+    font-weight:700;
+    transition:.2s;
+    padding:12px 20px;
+  }
+  .mobile-nav-overlay a:hover,.mobile-nav-overlay a.active{color:#6366f1;text-shadow:0 0 20px rgba(99,102,241,.5)}
+  body.touch-device .cursor-dot,body.touch-device .cursor-glow{display:none!important}
+  .topbar-right{gap:10px;display:flex;align-items:center}
+
+  @media(max-width:700px){
+    .hamburger{display:flex}
+    .topbar-left nav{display:none}
+    .topbar-pill{width:95%;padding:8px 15px}
+    .topbar-left{gap:0}
+    .wormgpt-wrapper{top:63px;bottom:52px}
+    .brand{font-size:18px}
+  }
+
+  @media(max-width:480px){
+    .topbar-pill{padding:6px 12px}
+    .brand{font-size:16px}
+    .wormgpt-wrapper{top:58px;bottom:48px}
+    .download-row{gap:6px}
+    .download-btn{font-size:11px;padding:6px 10px}
+    .download-btn svg{width:14px;height:14px}
+  }
+
+  @media(max-width:360px){
+    .download-btn{font-size:10px;padding:5px 8px}
+    .wormgpt-wrapper{bottom:44px}
+  }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar" id="topbar">
+  <div class="topbar-pill">
+    <div class="topbar-left">
+      <span class="brand">H&C</span>
+      <nav id="nav-menu">
+        <a href="index.html">Home</a>
+        <a href="based.html">Free Services</a>
+        <a href="paid-services.html">Paid Services</a>
+        <a href="community.html">Community</a>
+        <a href="discord.html">Backup</a>
+        <a href="searcher.html">Searcher</a>
+        <a class="active" href="wormgpt.html">WormGPT</a>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <span class="wormgpt-badge">LIVE</span>
+      <a href="https://dsc.gg/hacks-and-cheats" target="_blank">
+        <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e278299a53f5bf88615e90_Symbol.svg" style="width:22px;display:block;">
+      </a>
+      <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="mobile-nav-overlay" id="mobile-nav">
+  <a href="index.html">Home</a>
+  <a href="based.html">Free Services</a>
+  <a href="paid-services.html">Paid Services</a>
+  <a href="community.html">Community</a>
+  <a href="discord.html">Backup</a>
+  <a href="searcher.html">Searcher</a>
+  <a class="active" href="wormgpt.html">WormGPT</a>
+</div>
+
+<!-- WormGPT App (iframe) -->
+<div class="wormgpt-wrapper">
+  <iframe id="wormgpt-frame" src="wormgpt/index.html" title="WormGPT" allowfullscreen
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"></iframe>
+</div>
+
+<!-- Download native apps -->
+<div class="download-section">
+  <div class="download-row">
+    <a class="download-btn" href="Wormgpt%20Lkd/WormGPT%20Windows.zip" download>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>
+      Windows
+    </a>
+    <a class="download-btn" href="Wormgpt%20Lkd/WormGPT%20Linux.zip" download>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+      Linux
+    </a>
+    <a class="download-btn" href="Wormgpt%20Lkd/WormGPT_Android.zip" download>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 14.384a1.32 1.32 0 0 1-1.32-1.32 1.32 1.32 0 0 1 1.32-1.32 1.32 1.32 0 0 1 1.32 1.32 1.32 1.32 0 0 1-1.32 1.32zm-11.046 0a1.32 1.32 0 0 1-1.32-1.32 1.32 1.32 0 0 1 1.32-1.32 1.32 1.32 0 0 1 1.32 1.32 1.32 1.32 0 0 1-1.32 1.32zm11.492-6.14 2.014-3.488a.381.381 0 0 0-.136-.523.379.379 0 0 0-.523.135l-2.036 3.53a13.487 13.487 0 0 0-8.566 0L6.676 4.368a.38.38 0 0 0-.659.388l2.014 3.488C5.214 9.614 3.2 12.964 3.2 16.62h17.6c0-3.657-2.014-7.007-4.831-8.376z"/></svg>
+      Android
+    </a>
+    <a class="download-btn" href="Wormgpt%20Lkd/WormGPT%20Installation%20Guide%20for%20Beginners.pdf" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
+      Guide
+    </a>
+  </div>
+</div>
+
+<!-- Music player -->
+<iframe id="sc-player" width="1" height="1" style="opacity:0;position:absolute" allow="autoplay"
+  src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/ayhanbalaoghlanli/tiki_tiki-slowed-reverb&auto_play=false"></iframe>
+<script src="https://w.soundcloud.com/player/api.js"></script>
+<script src="music-controls.js"></script>
+
+<!-- Cursor -->
+<div class="cursor-dot"></div>
+<div class="cursor-glow"></div>
+
+<script>
+  /* Touch detection */
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    document.body.classList.add('touch-device');
+    document.querySelectorAll('.cursor-dot, .cursor-glow').forEach(el => el?.remove());
+  }
+
+  /* Hamburger menu */
+  (function(){
+    const hb = document.getElementById('hamburger-btn');
+    const mn = document.getElementById('mobile-nav');
+    if (hb && mn) {
+      hb.addEventListener('click', () => { hb.classList.toggle('active'); mn.classList.toggle('open'); });
+      mn.querySelectorAll('a').forEach(l => l.addEventListener('click', () => { hb.classList.remove('active'); mn.classList.remove('open'); }));
+    }
+  })();
+
+  const dot  = document.querySelector('.cursor-dot');
+  const glow = document.querySelector('.cursor-glow');
+  let mx = 0, my = 0, gx = 0, gy = 0;
+
+  addEventListener('mousemove', e => {
+    if (document.body.classList.contains('touch-device')) return;
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+    const hoverable = e.target.closest('a, button, .wormgpt-badge');
+    document.body.classList.toggle('hovering', !!hoverable);
+  });
+
+  (function loop() {
+    gx += (mx - gx) * 0.08;
+    gy += (my - gy) * 0.08;
+    glow.style.left = gx + 'px';
+    glow.style.top  = gy + 'px';
+    requestAnimationFrame(loop);
+  })();
+</script>
+</body>
+</html>

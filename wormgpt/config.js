@@ -9,6 +9,6 @@
 //
 // See DEPLOY-GITHUB-PAGES.md for full instructions.
 window.WORMGPT_CONFIG = {
-  apiBaseUrl: '',
-  wsBaseUrl: ''
+  apiBaseUrl: 'https://mon-discord-backend.onrender.com',
+  wsBaseUrl: 'wss://mon-discord-backend.onrender.com'
 };

@@ -50,6 +50,17 @@ const REDIRECT_URI = `${BASE_URL}/api/auth/discord/callback`;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://127.0.0.1:5500/based.html';
 const ENABLE_REMOTE_TOOLS = process.env.ENABLE_REMOTE_TOOLS === 'true';
 
+// ── Cloud AI fallback (Groq / OpenRouter) ──────────────────────────────────
+const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
+const AI_PROVIDER = process.env.AI_PROVIDER || 'groq';
+const CLOUD_MODEL = process.env.CLOUD_MODEL || 'llama3-70b-8192';
+const cloudAiConfigured = !!(GROQ_API_KEY);
+
+const GROQ_BASE = 'https://api.groq.com/openai/v1';
+const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
+
+const getCloudBaseUrl = () => AI_PROVIDER === 'openrouter' ? OPENROUTER_BASE : GROQ_BASE;
+
 // ── Ollama state ────────────────────────────────────────────────────────────
 let ollamaHealthy = false;
 let ollamaBaseUrl = 'http://localhost:11434';
@@ -195,7 +206,114 @@ app.get('/api/auth/discord/callback', async (req, res) => {
   }
 });
 
-// ── WormGPT Chat API (Ollama proxy) ─────────────────────────────────────────
+// ── Cloud AI chat (Groq / OpenRouter) ───────────────────────────────────────
+const streamCloudToOllama = async (req, res, messages, model, temperature) => {
+  const baseUrl = getCloudBaseUrl();
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${GROQ_API_KEY}`,
+  };
+  if (AI_PROVIDER === 'openrouter') {
+    headers['HTTP-Referer'] = FRONTEND_URL;
+    headers['X-Title'] = 'WormGPT';
+  }
+
+  const resp = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model: model || CLOUD_MODEL,
+      messages,
+      temperature: temperature ?? 0.7,
+      stream: true,
+      max_tokens: 4096,
+    }),
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text();
+    res.writeHead(200, SSE_HEADERS);
+    res.write(`data: ${JSON.stringify({ message: { content: `Cloud AI error: ${resp.status}. Check GROQ_API_KEY.` }, done: true })}\n\n`);
+    res.write(DONE_MSG);
+    res.end();
+    return;
+  }
+
+  res.writeHead(200, SSE_HEADERS);
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  req.on('close', () => { try { reader.cancel(); } catch {} });
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      res.write(DONE_MSG);
+      res.end();
+      break;
+    }
+    const text = decoder.decode(value, { stream: true });
+    for (const rawLine of text.split('\n')) {
+      const line = rawLine.trim();
+      if (!line || line === 'data: [DONE]') continue;
+      if (!line.startsWith('data: ')) continue;
+      try {
+        const chunk = JSON.parse(line.slice(6));
+        const delta = chunk.choices?.[0]?.delta;
+        const finishReason = chunk.choices?.[0]?.finish_reason;
+        if (!delta) continue;
+        const content = delta.content || '';
+        const isDone = finishReason === 'stop' || finishReason === 'length';
+        const ollamaChunk = {
+          model: model || CLOUD_MODEL,
+          message: { role: 'assistant', content },
+          done: isDone,
+        };
+        res.write(`data: ${JSON.stringify(ollamaChunk)}\n\n`);
+        if (isDone) {
+          res.write(DONE_MSG);
+          res.end();
+          try { reader.cancel(); } catch {}
+          return;
+        }
+      } catch {}
+    }
+  }
+};
+
+const callCloudNonStream = async (messages, model, temperature) => {
+  const baseUrl = getCloudBaseUrl();
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${GROQ_API_KEY}`,
+  };
+  if (AI_PROVIDER === 'openrouter') {
+    headers['HTTP-Referer'] = FRONTEND_URL;
+    headers['X-Title'] = 'WormGPT';
+  }
+  const resp = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model: model || CLOUD_MODEL,
+      messages,
+      temperature: temperature ?? 0.7,
+      stream: false,
+      max_tokens: 4096,
+    }),
+  });
+  if (!resp.ok) throw new Error(`Cloud AI ${resp.status}`);
+  const json = await resp.json();
+  return {
+    model: model || CLOUD_MODEL,
+    message: {
+      role: 'assistant',
+      content: json.choices?.[0]?.message?.content || '',
+    },
+    done: true,
+  };
+};
+
+// ── WormGPT Chat API (Ollama proxy with cloud fallback) ─────────────────────
 app.post('/api/chat', async (req, res) => {
   const { messages, model, temperature, stream, ollamaUrl } = req.body;
   const base = ollamaUrl || ollamaBaseUrl;
@@ -204,70 +322,100 @@ app.post('/api/chat', async (req, res) => {
   const ctrl = new AbortController();
   const timeout = setTimeout(() => ctrl.abort(), 180_000);
 
-  try {
-    const ollamaRes = await fetch(`${base}/api/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: model || 'godmoded/llama3-lexi-uncensored',
-        messages,
-        temperature: temperature ?? 0.7,
-        stream: stream !== false,
-        options: {
-          num_thread: CPU_COUNT,
-          num_batch: 512,
-          f16_kv: true,
-          use_mlock: true,
-          use_mmap: true,
-          num_ctx: 4096,
-        },
-      }),
-      signal: ctrl.signal,
-    });
+  // Try Ollama first
+  const ollamaOk = await checkOllamaHealth(base);
 
-    clearTimeout(timeout);
+  if (ollamaOk) {
+    try {
+      const ollamaRes = await fetch(`${base}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: model || 'godmoded/llama3-lexi-uncensored',
+          messages,
+          temperature: temperature ?? 0.7,
+          stream: stream !== false,
+          options: {
+            num_thread: CPU_COUNT,
+            num_batch: 512,
+            f16_kv: true,
+            use_mlock: true,
+            use_mmap: true,
+            num_ctx: 4096,
+          },
+        }),
+        signal: ctrl.signal,
+      });
 
-    if (!ollamaRes.ok) {
-      res.status(ollamaRes.status).json({ error: await ollamaRes.text() });
-      return;
-    }
+      clearTimeout(timeout);
 
-    if (stream !== false) {
-      res.writeHead(200, SSE_HEADERS);
-      const reader = ollamaRes.body.getReader();
-      const decoder = new TextDecoder();
-      req.on('close', () => { try { reader.cancel(); } catch {} });
+      if (!ollamaRes.ok) {
+        res.status(ollamaRes.status).json({ error: await ollamaRes.text() });
+        return;
+      }
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) { res.write(DONE_MSG); res.end(); break; }
-        const text = decoder.decode(value, { stream: true });
-        for (const rawLine of text.split('\n')) {
-          const line = rawLine.trim();
-          if (!line) continue;
-          res.write(`data: ${line}\n\n`);
-          if (line.includes('"done":true')) {
-            try {
-              const json = JSON.parse(line);
-              if (json.done === true) { res.end(); try { reader.cancel(); } catch {} return; }
-            } catch {}
+      if (stream !== false) {
+        res.writeHead(200, SSE_HEADERS);
+        const reader = ollamaRes.body.getReader();
+        const decoder = new TextDecoder();
+        req.on('close', () => { try { reader.cancel(); } catch {} });
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) { res.write(DONE_MSG); res.end(); break; }
+          const text = decoder.decode(value, { stream: true });
+          for (const rawLine of text.split('\n')) {
+            const line = rawLine.trim();
+            if (!line) continue;
+            res.write(`data: ${line}\n\n`);
+            if (line.includes('"done":true')) {
+              try {
+                const json = JSON.parse(line);
+                if (json.done === true) { res.end(); try { reader.cancel(); } catch {} return; }
+              } catch {}
+            }
           }
         }
+      } else {
+        res.json(await ollamaRes.json());
       }
-    } else {
-      res.json(await ollamaRes.json());
+      return;
+    } catch (e) {
+      clearTimeout(timeout);
+      console.error('Ollama request failed, falling back to cloud:', e.message);
     }
-  } catch (e) {
-    clearTimeout(timeout);
-    if (e.name === 'AbortError') res.status(408).json({ error: 'Request timeout' });
-    else res.status(500).json({ error: e.message });
   }
+
+  // Ollama unavailable → use cloud fallback if configured
+  if (cloudAiConfigured) {
+    clearTimeout(timeout);
+    try {
+      if (stream !== false) {
+        await streamCloudToOllama(req, res, messages, model, temperature);
+      } else {
+        const result = await callCloudNonStream(messages, model, temperature);
+        res.json(result);
+      }
+      return;
+    } catch (e) {
+      console.error('Cloud AI error:', e.message);
+      res.status(500).json({ error: `Cloud AI error: ${e.message}` });
+      return;
+    }
+  }
+
+  // Neither Ollama nor cloud AI available
+  clearTimeout(timeout);
+  const errorMsg = `I'm WormGPT, your unrestricted AI. The backend isn't connected yet.\n\nTo connect:\n1. Install Ollama from ollama.ai\n2. Pull the model: ollama pull godmoded/llama3-lexi-uncensored\n3. Start: cd server && npm start\n\nOr set GROQ_API_KEY in .env for cloud AI.`;
+  res.status(503).json({ error: errorMsg });
 });
 
 // ── Ollama Status & Models ───────────────────────────────────────────────────
 app.get('/api/ollama/status', async (req, res) => {
   const base = req.query.url || ollamaBaseUrl;
-  res.json({ connected: await checkOllamaHealth(base), url: base });
+  const ollamaOk = await checkOllamaHealth(base);
+  const connected = ollamaOk || cloudAiConfigured;
+  res.json({ connected, url: base, cloudFallback: cloudAiConfigured });
 });
 
 app.get('/api/ollama/models', async (req, res) => {
@@ -276,17 +424,39 @@ app.get('/api/ollama/models', async (req, res) => {
     const ctrl = new AbortController();
     setTimeout(() => ctrl.abort(), 5000);
     const r = await fetch(`${base}/api/tags`, { signal: ctrl.signal });
-    if (!r.ok) throw new Error(`Ollama returned ${r.status}`);
-    res.json(await r.json());
-  } catch (e) {
-    res.status(503).json({ error: `Cannot reach Ollama at ${base}: ${e.message}` });
+    if (r.ok) {
+      res.json(await r.json());
+      return;
+    }
+  } catch {}
+  if (cloudAiConfigured) {
+    const cloudModelName = AI_PROVIDER === 'openrouter' ? 'openrouter/auto' : CLOUD_MODEL;
+    res.json({
+      models: [{
+        name: cloudModelName,
+        modified_at: new Date().toISOString(),
+        size: 0,
+        digest: 'cloud',
+        details: { family: AI_PROVIDER, parameter_size: 'cloud', quantization_level: 'cloud' },
+      }],
+    });
+    return;
   }
+  res.status(503).json({ error: `Cannot reach Ollama at ${base}` });
 });
 
 app.post('/api/ollama/pull', async (req, res) => {
   const { model, ollamaUrl } = req.body;
   const base = ollamaUrl || ollamaBaseUrl;
   if (!model) { res.status(400).json({ error: 'model required' }); return; }
+  const ollamaOk = await checkOllamaHealth(base);
+  if (!ollamaOk && cloudAiConfigured) {
+    res.writeHead(200, SSE_HEADERS);
+    res.write(`data: ${JSON.stringify({ status: 'success', digest: 'cloud', total: 0, completed: 0 })}\n\n`);
+    res.write(DONE_MSG);
+    res.end();
+    return;
+  }
   res.writeHead(200, SSE_HEADERS);
   try {
     const resp = await fetch(`${base}/api/pull`, {
